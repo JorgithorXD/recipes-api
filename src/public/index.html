@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recetario</title>
+</head>
+<body>
+    <h1>Recetario API</h1>
+    <p>Una pequeña API para la aplicacion Recetly. 
+        Parte del proyecto para la materia: Desarrollo de aplicaciones moviles para iOS.
+    </p>
+    <h2>Algunas de las acciones que se pueden realizar son:</h2>
+    <ul>
+        <li><a href="/recipe/all">Ver todas las recetas</a></li>
+        <li><a href="/recipe/form">Agregar una receta</a></li>
+    </ul>
+</body>
+</html>
+
+<style>
+    * {
+        padding: 0;
+        margin: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        width: 100dvw;
+        height: 100dvh;
+    }
+
+    html {
+        font-size: 12px;
+    }
+
+    h1 {
+        margin: 2rem 0 0 0;
+        font-size: 3rem;
+        text-align: center;
+    }
+
+    h2 {
+        font-size: 1.5rem;
+        text-align: center;
+        margin: 1rem 0 0 0;
+    }
+
+    p {
+        font-size: 1.5rem;
+        margin: 1rem 0 0 1rem;
+    }
+
+    ul {
+        width: 90%;
+        margin: 0 auto;
+        list-style: none;
+
+        & li {
+            margin-top: 1.2rem;
+
+            & a {
+            font-size: 2rem;
+            color: black;
+            text-decoration: none;
+            background-color: rgba(218, 214, 214, 0.301);
+            padding: 0.3rem 2rem;
+            border-radius: 0.3rem;
+            border: 2px solid #ccc;
+        }
+        }
+    }
+</style>
