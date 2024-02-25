@@ -1,7 +1,7 @@
 import express from "express"
 import recipesRoutes from "./routes/recipesRoutes.js"
 import userRoutes from './routes/userRoutes.js'
-import recipesImgRoutes from './routes/recipesImgRoutes.js'
+import srcRoutes from './routes/srcRoutes.js'
 import { fileURLToPath } from 'url'
 import { dirname, join } from 'path'
 import bodyParser from 'body-parser'
@@ -22,7 +22,7 @@ app.get('/', (req, res) => {
 })
 
 app.use('/recipe', recipesRoutes)
-app.use('/recipe', recipesImgRoutes)
+app.use('/src', srcRoutes)
 app.use('/user', userRoutes)
 
 app.listen(PORT, () => {

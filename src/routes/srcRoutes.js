@@ -24,7 +24,7 @@ const uploads = multer({
     dest: join(__dirname, '../public/uploads/')
 })
 
-router.post('/post/src/single-img', uploads.single('imageFiles'), async (req, res) => {
+router.post('/post/single-img', uploads.single('imageFiles'), async (req, res) => {
     try {
         var fileBuffer = fs.readFileSync(req.file.path)
         var base64Image = fileBuffer.toString('base64')
@@ -79,7 +79,7 @@ router.post('/post/src/single-img', uploads.single('imageFiles'), async (req, re
     }
 })
 
-router.post('/post/src/multiple-img', uploads.array('imageFiles', 5), async (req, res) => {
+router.post('/post/multiple-img', uploads.array('imageFiles', 5), async (req, res) => {
     try {
         const files = req.files
 

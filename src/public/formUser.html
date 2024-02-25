@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrar</title>
+</head>
+<body>
+    <form action="/user/register" method="post">
+        <label for="user_name">Nombre (s)</label>
+        <input type="text" name="user_name" id="user_name">
+        <label for="user_last_name">Apellido (s)</label>
+        <input type="text" name="user_last_name" id="user_last_name">
+        <label for="user_username">Nombre de usuario</label>
+        <input type="text" name="user_username" id="user_username">
+        <label for="user_mail">Correo</label>
+        <input type="email" name="user_mail" id="user_mail">
+        <label for="user_password">Contraseña</label>
+        <input type="password" name="user_password" id="user_password">
+
+        <input type="submit" value="Registrar">
+    </form>
+</body>
+</html>
