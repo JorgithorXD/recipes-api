@@ -6,9 +6,12 @@ import { fileURLToPath } from 'url'
 import { dirname, join } from 'path'
 import bodyParser from 'body-parser'
 import foodRoutes from './routes/foodRoutes.js'
+import dotenv from 'dotenv'
+
+dotenv.config()
 
 const app = express()
-const PORT = 4121
+const PORT = process.env.PORT ?? 4121
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 
