@@ -9,9 +9,10 @@
 
 <body>
     <main>
-        <form>
+        <form action="/recipe/all-data" method="post" enctype="multipart/form-data">
             <label for="recipeName">Nombre de la receta:</label>
             <input type="text" name="recipeName" id="recipeName">
+            <input type="file" name="recipeImage" id="recipeImage" accept="image/*">
             <section class="tags">
                 <select name="recipeTag" id="recipeTag">
                     <option disabled>Elige la etiqueta de la receta</option>
@@ -38,6 +39,10 @@
             <div>
                 <input type="text" name="recipeIngredient">
             </div>
+
+            <input type="file" name="stepsImage" id="">
+
+            <input type="submit" value="Subir receta">
         </form>
     </main>
 </body>

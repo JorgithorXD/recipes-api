@@ -4,7 +4,7 @@ async function singUp(email, password) {
     try {
         const { data, error } = await supabase
             .from('user_private_information')
-            .insert([{user_mail: email, user_password:password}])
+            .insert([{ user_email: email, user_password: password }])
             .select()
 
         if (error) {
@@ -39,16 +39,6 @@ async function register(email, password, name, username) {
                         user_username: username,
                     },
                 ])
-            const { data: privateData, error: privateError } = await supabase
-                .from('user_private_information')
-                .insert([
-                    {
-                        user_id: userId,
-                        user_mail: email,
-                        user_password: password,
-                    },
-                ])
-
             if (profileError) {
                 console.error('Error al guardar datos personales:', profileError.message);
                 return { success: false, error: profileError.message }

@@ -24,8 +24,16 @@ const uploads = multer({
     dest: join(__dirname, '../public/uploads/')
 })
 
-router.post('/post/single-img', uploads.single('imageFiles'), async (req, res) => {
+router.get('/test', (req,res) => {
+    res.sendFile(join(__dirname, '../public/uploadImage.html'))
+})
+
+router.post('/post/single-img', uploads.single('recipeImage'), async (req, res) => {
     try {
+        if (!req.file) {
+            return res.status(400).send('No se ha proporcionado ningún archivo');
+        }
+
         var fileBuffer = fs.readFileSync(req.file.path)
         var base64Image = fileBuffer.toString('base64')
 
@@ -79,7 +87,7 @@ router.post('/post/single-img', uploads.single('imageFiles'), async (req, res) =
     }
 })
 
-router.post('/post/multiple-img', uploads.array('imageFiles', 5), async (req, res) => {
+router.post('/post/multiple-img', uploads.array('recipeImages', 10), async (req, res) => {
     try {
         const files = req.files
 

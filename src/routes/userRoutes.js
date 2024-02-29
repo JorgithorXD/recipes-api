@@ -20,7 +20,9 @@ router.get('/form/register', (req, res) => {
 
 router.post('/register', async (req, res) => {
     const {user_name, user_last_name, user_username, user_mail, user_password} = req.body
-    await register( user_mail, user_password, user_name, user_username)
+    const result = await register( user_mail, user_password, user_name, user_username)
+
+    res.send(result)
 })
 
 export default router
