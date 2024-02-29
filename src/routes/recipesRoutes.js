@@ -21,6 +21,10 @@ router.get('/form/img', (req, res) => {
     res.sendFile(join(__dirname, '../public/recipeImgForm.html'))
 })
 
+router.get('/form', (req, res) => {
+    res.sendFile(join(__dirname, '../public/recipeForm.html'))
+})
+
 router.post('/post', async (req, res) => {
     try {
 

@@ -5,6 +5,7 @@ import srcRoutes from './routes/srcRoutes.js'
 import { fileURLToPath } from 'url'
 import { dirname, join } from 'path'
 import bodyParser from 'body-parser'
+import foodRoutes from './routes/foodRoutes.js'
 
 const app = express()
 const PORT = 4121
@@ -24,6 +25,7 @@ app.get('/', (req, res) => {
 app.use('/recipe', recipesRoutes)
 app.use('/src', srcRoutes)
 app.use('/user', userRoutes)
+app.use('/food', foodRoutes)
 
 app.listen(PORT, () => {
     console.log('server listening on https://localhost:' + PORT)

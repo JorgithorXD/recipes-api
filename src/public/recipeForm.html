@@ -1,17 +1,124 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Formulario de recetas</title>
 </head>
+
 <body>
     <main>
         <form>
             <label for="recipeName">Nombre de la receta:</label>
             <input type="text" name="recipeName" id="recipeName">
-            
+            <section class="tags">
+                <select name="recipeTag" id="recipeTag">
+                    <option disabled>Elige la etiqueta de la receta</option>
+                </select>
+                <button class="new-tag-button">Agregar otra etiqueta</button>
+            </section>
+            <select name="recipeType">
+                <option>Elige el tipo de la receta</option>
+            </select>
+            <div>
+                <input type="number" name="recipeTime">
+                <select name="recipeTimeUnit">
+                    <option disabled>Elige la unidad de tiempo</option>
+                    <option value="1">Minutos</option>
+                    <option value="2">Horas</option>
+                </select>
+                <input type="number" name="recipeTime">
+                <select name="recipeTimeUnit">
+                    <option disabled>Elige la unidad de tiempo</option>
+                    <option value="1">Minutos</option>
+                    <option value="2">Horas</option>
+                </select>
+            </div>
+            <div>
+                <input type="text" name="recipeIngredient">
+            </div>
         </form>
     </main>
 </body>
+
+<script>
+    document.addEventListener('DOMContentLoaded', async () => {
+        var $select = document.querySelectorAll('#recipeTag')
+        const $newTag = document.querySelector('.new-tag-button')
+        const $selectContainer = document.querySelector('.tags')
+        var tags
+
+        async function fetchTag() {
+            try {
+                const dataTags = await fetch('/food/tag')
+                const jsonTag = await dataTags.json()
+
+                return jsonTag
+            } catch (error) {
+                console.error(error)
+                return null
+            }
+        }
+
+        function addSelectTag() {
+            const select = document.createElement('select')
+            select.setAttribute('name', 'recipeTag')
+            select.setAttribute('id', 'recipeTag')
+
+            const option = document.createElement('option')
+            option.innerText = 'Elige la etiqueta de la receta'
+            option.disabled = true
+
+            select.appendChild(option)
+            $selectContainer.appendChild(select)
+        }
+
+        const data = await fetchTag()
+        console.log(data)
+
+        function setSelectData(r) {
+            try {
+                r.map(tag => {
+                    const optionTag = document.createElement('option')
+                    optionTag.setAttribute('value', tag.tag_id)
+                    optionTag.innerText = tag.name
+
+                    $select.forEach(e => {
+                        e.appendChild(optionTag)
+                    })
+                })
+            } catch (error) {
+                console.log(error)
+            }
+        }
+
+        setSelectData(data)
+
+        $newTag.addEventListener('click', async (evt) => {
+            evt.preventDefault()
+            addSelectTag()
+
+            refreshSelect(data)
+        })
+
+        function refreshSelect(r) {
+            $select = document.querySelectorAll('#recipeTag')
+            $select.forEach((e, i) => {
+                try {
+                    r.map(tag => {
+                        const optionTag = document.createElement('option')
+                        optionTag.setAttribute('value', tag.tag_id)
+                        optionTag.innerText = tag.name
+
+                        $select[i].appendChild(optionTag)
+                    })
+                } catch (error) {
+                    console.log(error)
+                }
+            })
+        }
+    })
+</script>
+
 </html>
