@@ -7,6 +7,7 @@ import { dirname, join } from 'path'
 import bodyParser from 'body-parser'
 import foodRoutes from './routes/foodRoutes.js'
 import dotenv from 'dotenv'
+import cookieParser from "cookie-parser"
 
 dotenv.config()
 
@@ -20,6 +21,7 @@ app.use(bodyParser.json())
 app.use(express.static(join(__dirname, '/public')))
 app.use(express.json())
 app.use(express.urlencoded({ extended: false}))
+app.use(cookieParser())
 
 app.get('/', (req, res) => {
     res.sendFile('./public/index.html')

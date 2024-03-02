@@ -13,12 +13,14 @@
             <label for="recipeName">Nombre de la receta:</label>
             <input type="text" name="recipeName" id="recipeName">
             <input type="file" name="recipeImage" id="recipeImage" accept="image/*">
-            <section class="tags">
-                <select name="recipeTag" id="recipeTag">
-                    <option disabled>Elige la etiqueta de la receta</option>
-                </select>
-                <button class="new-tag-button">Agregar otra etiqueta</button>
-            </section>
+            <ul class="tags">
+                <li>
+                    <select name="recipeTag" id="recipeTag">
+                        <option disabled>Elige la etiqueta de la receta</option>
+                    </select>
+                </li>
+                <button class="new-tag-button">+</button>
+            </ul>
             <select name="recipeType">
                 <option>Elige el tipo de la receta</option>
             </select>
@@ -40,7 +42,7 @@
                 <input type="text" name="recipeIngredient">
             </div>
 
-            <input type="file" name="stepsImage" id="">
+            <input type="file" name="recipeImage" id="">
 
             <input type="submit" value="Subir receta">
         </form>
@@ -67,6 +69,7 @@
         }
 
         function addSelectTag() {
+            const li = document.createElement('li')
             const select = document.createElement('select')
             select.setAttribute('name', 'recipeTag')
             select.setAttribute('id', 'recipeTag')
@@ -76,7 +79,8 @@
             option.disabled = true
 
             select.appendChild(option)
-            $selectContainer.appendChild(select)
+            li.appendChild(select)
+            $selectContainer.appendChild(li)
         }
 
         const data = await fetchTag()
@@ -125,5 +129,72 @@
         }
     })
 </script>
+
+<style>
+    html {
+        font-size: 12px;
+        font-family: system-ui, sans-serif;
+    }
+
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        border: 0;
+    }
+
+    body {
+        width: 100dvw;
+        height: 100dvh;
+        background: red;
+        display: flex;
+
+        & form {
+            display: flex;
+            flex-direction: column;
+
+            & input,
+            select {
+                width: 90%;
+                height: 2.5rem;
+                outline: none;
+            }
+        }
+    }
+
+    input {
+        height: 2rem;
+    }
+
+    ul {
+        width: 80%;
+        position: relative;
+        list-style: none;
+        margin: 1rem 0 1rem 0;
+
+        & li {
+            width: 100%;
+            margin: 0.5rem 0;
+
+            & select {
+                width: 100%;
+            }
+        }
+
+        .new-tag-button {
+            position: absolute;
+            font-size: 1.5rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 0.25rem;
+            right: -2.8rem;
+            top: -0.45rem;
+        }
+    }
+
+    input[type="submit"] {
+        width: fit-content;
+        padding: 0.25rem 3rem;
+    }
+</style>
 
 </html>

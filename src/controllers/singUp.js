@@ -4,7 +4,7 @@ async function singUp(email, password) {
     try {
         const { data, error } = await supabase
             .from('user_private_information')
-            .insert([{ user_email: email, user_password: password }])
+            .insert([{ user_password: password }])
             .select()
 
         if (error) {
@@ -37,6 +37,7 @@ async function register(email, password, name, username) {
                         user_id: userId,
                         user_name: name,
                         user_username: username,
+                        user_email: email
                     },
                 ])
             if (profileError) {

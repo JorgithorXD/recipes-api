@@ -4,22 +4,22 @@ import { get } from '../controllers/getRecipes.js'
 import { fileURLToPath } from 'url'
 import { dirname, join } from 'path'
 import multer from 'multer'
-import fs from 'fs'
-import { uploadSingleImage } from '../controllers/uploadMethods.js'
+import { uploadSingleImage, uploadMultipleImages } from '../controllers/uploadMethods.js'
+import { isLogged } from '../controllers/middelwares.js'
 
 const router = express.Router()
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 
+const storage = multer.memoryStorage();
+const uploads = multer({ storage: storage });
 
-
-router.post('/all-data', async (req, res) => {
+router.post('/all-data', uploads.array('recipeImage'), async (req, res) => {
     try {
-        const { recipeImage } = req.body
-
-        const uploadImage = await uploadSingleImage(recipeImage)
-
         console.log(req.body)
+
+        const uploadImages = await uploadMultipleImages(req.files)
+        res.json(uploadImages)
     } catch (error) {
         console.log(error)
     }
@@ -38,7 +38,7 @@ router.get('/form/img', (req, res) => {
     res.sendFile(join(__dirname, '../public/recipeImgForm.html'))
 })
 
-router.get('/form', (req, res) => {
+router.get('/form', isLogged, (req, res) => {
     res.sendFile(join(__dirname, '../public/recipeForm.html'))
 })
 
