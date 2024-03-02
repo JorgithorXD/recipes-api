@@ -11,7 +11,6 @@ async function singUp(email, password) {
             console.error('Error al registrar usuario:', error.message)
             return { success: false, error: error.message }
         } else {
-            console.log('Usuario registrado exitosamente')
             return { success: true, data }
         }
     } catch (error) {
@@ -20,7 +19,7 @@ async function singUp(email, password) {
     }
 }
 
-async function register(email, password, name, username) {
+async function register(email, password, name, username, user_last_name, user_pfp) {
     try {
         const { data, error } = await singUp(email, password)
 
@@ -37,7 +36,9 @@ async function register(email, password, name, username) {
                         user_id: userId,
                         user_name: name,
                         user_username: username,
-                        user_email: email
+                        user_pfp,
+                        user_email: email,
+                        user_last_name
                     },
                 ])
             if (profileError) {
