@@ -4,7 +4,7 @@ import https from 'https'
 async function uploadSingleImage(file) {
     return new Promise((resolve, reject) => {
         try {
-            if (!file || !file.buffer || file.buffer.length === 0) {
+            if (!file || !file.buffer) {
                 reject('No se proporcionó ningún archivo o archivo inválido.')
                 return
             }
