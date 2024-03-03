@@ -9,41 +9,81 @@
 
 <body>
     <main>
+        <h1>Agregar una nueva receta</h1>
         <form action="/recipe/all-data" method="post" enctype="multipart/form-data">
             <label for="recipeName">Nombre de la receta:</label>
-            <input type="text" name="recipeName" id="recipeName">
+            <input type="text" name="recipeName" id="recipeName" placeholder="Ejemplo: Pan de manzana">
+
+            <label for="recipeImage">Foto de la receta</label>
             <input type="file" name="recipeImage" id="recipeImage" accept="image/*">
+            <h3>Etiquetas</h3>
             <ul class="tags">
+                <input type="button" class="new-tag-button" value="Agregar otra etiqueta">
                 <li>
                     <select name="recipeTag" id="recipeTag">
-                        <option disabled>Elige la etiqueta de la receta</option>
+                        <option hidden>Elige la etiqueta de la receta</option>
                     </select>
                 </li>
-                <button class="new-tag-button">+</button>
             </ul>
-            <select name="recipeType">
-                <option>Elige el tipo de la receta</option>
+            <h3>Categoria de la receta</h3>
+            <select name="recipeType" class="recipeType">
+                <option hidden>Elige la categoria de la receta</option>
             </select>
+            <h3>Tiempo de realizacion</h3>
             <div>
-                <input type="number" name="recipeTime">
-                <select name="recipeTimeUnit">
-                    <option disabled>Elige la unidad de tiempo</option>
-                    <option value="1">Minutos</option>
-                    <option value="2">Horas</option>
-                </select>
-                <input type="number" name="recipeTime">
-                <select name="recipeTimeUnit">
-                    <option disabled>Elige la unidad de tiempo</option>
-                    <option value="1">Minutos</option>
-                    <option value="2">Horas</option>
-                </select>
+                <div class="timer">
+                    <label for="recipeTime">De</label>
+                    <input type="number" name="recipeTime">
+                    <select name="recipeTimeUnit">
+                        <option hidden>Elige la unidad de tiempo</option>
+                        <option value="1">Minuto(s)</option>
+                        <option value="2">Hora(s)</option>
+                    </select>
+                </div>
+                <div class="timer">
+                    <label for="recipeTime">A</label>
+                    <input type="number" name="recipeTime">
+                    <select name="recipeTimeUnit">
+                        <option hidden>Elige la unidad de tiempo</option>
+                        <option value="1">Minuto(s)</option>
+                        <option value="2">Hora(s)</option>
+                    </select>
+                </div>
             </div>
-            <div>
-                <input type="text" name="recipeIngredient">
-            </div>
-
-            <input type="file" name="recipeImage" id="">
-
+            <h3>Ingredientes</h3>
+            <ul class="ingredients-list">
+                <li>
+                    <input type="button" class="add-new-li" value="+">
+                </li>
+                <li>
+                    <div>
+                        <label for="recipeIngredient">Ingrediente</label>
+                        <input type="text" name="recipeIngredient" placeholder="Nombre del ingrediente">
+                        <input type="number" name="recipeIngredientUnitCount" id="recipeIngredientUnitCount"
+                            placeholder="Cantidad">
+                        <select name="recipeIngredientUnit" id="recipeIngredientUnit">
+                            <option hidden>Unidad de medida del ingrediente</option>
+                            <option value="1">Miligramos (mg)</option>
+                            <option value="2">Gramos (g)</option>
+                            <option value="3">Kilogramos (kg)</option>
+                            <option value="4">Mililitros (ml)</option>
+                            <option value="5">Litros (l)</option>
+                            <option value="6">Piezas (pz)</option>
+                        </select>
+                    </div>
+                </li>
+            </ul>
+            <h3>Pasos de la receta</h3>
+            <ul class="steps-list">
+                <input type="button" value="Agregar otro paso" class="add-new-step">
+                <li>
+                    <div>
+                        <label for="recipeSteps">Paso</label>
+                        <textarea name="recipeSteps" id="recipeSteps" cols="30" rows="10"></textarea>
+                        <input type="file" name="recipeImages">
+                    </div>
+                </li>
+            </ul>
             <input type="submit" value="Subir receta">
         </form>
     </main>
@@ -52,7 +92,10 @@
 <script>
     document.addEventListener('DOMContentLoaded', async () => {
         var $select = document.querySelectorAll('#recipeTag')
+        var $selectType = document.querySelectorAll('.recipeType')
         const $newTag = document.querySelector('.new-tag-button')
+        const $newLi = document.querySelector('.add-new-li')
+        const $newStep = document.querySelector('.add-new-step')
         const $selectContainer = document.querySelector('.tags')
         var tags
 
@@ -68,6 +111,49 @@
             }
         }
 
+        async function fetchTypes() {
+            try {
+                const dataTypes = await fetch('/food/type')
+                const jsonType = await dataTypes.json()
+
+                return jsonType
+            } catch (error) {
+                console.error(error)
+                return null
+            }
+        }
+
+        function addIngredientLi() {
+            const li = document.createElement('li')
+            li.innerHTML = `<div>
+                        <label for="recipeIngredient">Ingrediente</label>
+                        <input type="text" name="recipeIngredient" placeholder="Nombre del ingrediente">
+                        <input type="number" name="recipeIngredientUnitCount" id="recipeIngredientUnitCount" placeholder="Cantidad">
+                        <select name="recipeIngredientUnit" id="recipeIngredientUnit">
+                            <option hidden>Unidad de medida del ingrediente</option>
+                            <option value="1">Miligramos (mg)</option>
+                            <option value="2">Gramos (g)</option>
+                            <option value="3">Kilogramos (kg)</option>
+                            <option value="4">Mililitros (ml)</option>
+                            <option value="5">Litros (l)</option>
+                            <option value="6">Piezas (pz)</option>
+                        </select>
+                    </div>`
+
+            document.querySelector('.ingredients-list').appendChild(li)
+        }
+
+        function addStepLi() {
+            const li = document.createElement('li')
+            li.innerHTML = `<div>
+                        <label for="recipeSteps">Paso</label>
+                        <textarea name="recipeSteps" id="recipeSteps" cols="30" rows="10"></textarea>
+                        <input type="file" name="recipeImages">
+                    </div>`
+
+            document.querySelector('.steps-list').appendChild(li)
+        }
+
         function addSelectTag() {
             const li = document.createElement('li')
             const select = document.createElement('select')
@@ -76,7 +162,7 @@
 
             const option = document.createElement('option')
             option.innerText = 'Elige la etiqueta de la receta'
-            option.disabled = true
+            option.hidden = true
 
             select.appendChild(option)
             li.appendChild(select)
@@ -84,7 +170,24 @@
         }
 
         const data = await fetchTag()
-        console.log(data)
+        const dataType = await fetchTypes()
+        console.log(data, dataType)
+
+        function setSelectType(r) {
+            try {
+                r.map(type => {
+                    const optionType = document.createElement('option')
+                    optionType.setAttribute('value', type.categoty_id)
+                    optionType.innerText = type.category
+
+                    $selectType.forEach(e => {
+                        e.appendChild(optionType)
+                    })
+                })
+            } catch (error) {
+                console.log(error)
+            }
+        }
 
         function setSelectData(r) {
             try {
@@ -103,6 +206,7 @@
         }
 
         setSelectData(data)
+        setSelectType(dataType)
 
         $newTag.addEventListener('click', async (evt) => {
             evt.preventDefault()
@@ -110,6 +214,18 @@
 
             refreshSelect(data)
         })
+
+        $newLi.addEventListener('click', (evt) => {
+            evt.preventDefault()
+            addIngredientLi()
+        })
+
+        $newStep.addEventListener('click', (evt) => {
+            evt.preventDefault()
+            addStepLi()
+        })
+
+
 
         function refreshSelect(r) {
             $select = document.querySelectorAll('#recipeTag')
@@ -132,7 +248,7 @@
 
 <style>
     html {
-        font-size: 12px;
+        font-size: 16px;
         font-family: system-ui, sans-serif;
     }
 
@@ -146,18 +262,26 @@
     body {
         width: 100dvw;
         height: 100dvh;
-        background: red;
+        background: rgb(214, 214, 214);
         display: flex;
 
+        & h1 {
+            text-align: center;
+        }
+
         & form {
+            width: 100%;
             display: flex;
             flex-direction: column;
+            padding-inline: 1.5rem;
 
             & input,
             select {
-                width: 90%;
+                width: 100%;
+                padding-inline: 10px;
                 height: 2.5rem;
                 outline: none;
+                border: 1px solid black;
             }
         }
     }
@@ -167,33 +291,57 @@
     }
 
     ul {
-        width: 80%;
+        display: flex;
+        flex-direction: column;
+        width: 100%;
         position: relative;
         list-style: none;
-        margin: 1rem 0 1rem 0;
 
         & li {
             width: 100%;
-            margin: 0.5rem 0;
+            margin: 0.125rem 0;
+
+            & div {
+                display: flex;
+                flex-direction: column;
+            }
 
             & select {
                 width: 100%;
             }
         }
-
-        .new-tag-button {
-            position: absolute;
-            font-size: 1.5rem;
-            padding: 0.25rem 0.75rem;
-            border-radius: 0.25rem;
-            right: -2.8rem;
-            top: -0.45rem;
-        }
     }
 
     input[type="submit"] {
-        width: fit-content;
-        padding: 0.25rem 3rem;
+        width: 100%;
+        font-size: 1rem;
+    }
+
+    h3 {
+        margin: 0.25rem 0;
+    }
+
+    .timer {
+        position: relative;
+        padding: 0.125rem 0;
+        display: flex;
+        gap: 1rem;
+
+        & label {
+            position: absolute;
+            font-size: 1rem;
+            top: -0.5rem;
+            left: 0.5rem;
+            font-weight: bold;
+        }
+
+        & input {
+            width: 7rem;
+        }
+
+        & input, select {
+            border-radius: 8px;
+        }
     }
 </style>
 

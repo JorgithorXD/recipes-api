@@ -18,8 +18,6 @@ router.post('/all-data', uploads.array('recipeImage'), async (req, res) => {
     try {
         console.log(req.body)
 
-        const uploadImages = await uploadMultipleImages(req.files)
-        res.json(uploadImages)
     } catch (error) {
         console.log(error)
     }
@@ -38,7 +36,7 @@ router.get('/form/img', (req, res) => {
     res.sendFile(join(__dirname, '../public/recipeImgForm.html'))
 })
 
-router.get('/form', isLogged, (req, res) => {
+router.get('/form', (req, res) => {
     res.sendFile(join(__dirname, '../public/recipeForm.html'))
 })
 
