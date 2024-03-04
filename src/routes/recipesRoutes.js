@@ -6,7 +6,7 @@ import { dirname, join } from 'path'
 import multer from 'multer'
 import { uploadSingleImage, uploadMultipleImages } from '../controllers/uploadMethods.js'
 import { isLogged } from '../controllers/middelwares.js'
-import { CLIENT_RENEG_LIMIT } from 'tls'
+import fs from 'fs/promises'
 
 const router = express.Router()
 const __filename = fileURLToPath(import.meta.url)
@@ -17,7 +17,7 @@ const uploads = multer({ storage: storage });
 
 router.post('/all-data', uploads.array('recipeImage'), async (req, res) => {
     try {
-        var { recipeName, recipeType, recipeTag, recipeTime, recipeTimeUnit, recipeIngredient, recipeIngredientUnit, recipeIngredientUnitCount, recipeSteps } = req.body
+        /*var { recipeName, recipeType, recipeTag, recipeTime, recipeTimeUnit, recipeIngredient, recipeIngredientUnit, recipeIngredientUnitCount, recipeSteps } = req.body
 
         recipeIngredient = Array.from(recipeIngredient)
         recipeIngredientUnitCount = Array.from(recipeIngredientUnitCount)
@@ -57,18 +57,18 @@ router.post('/all-data', uploads.array('recipeImage'), async (req, res) => {
         recipeIngredients = Array.isArray(recipeIngredients) ? recipeIngredients : [recipeIngredients]
 
         const userId = req.cookies['logged-user-id'] ?? 'f659951b-43ba-4704-b662-0edb234bba0c'
-
+*/
         const img = await uploadMultipleImages(req.files)
         console.log(img)
-
-        const success = await upload.recipe(userId, recipeName, recipeTag, recipeType, recipeTime, recipeSteps, recipeIngredient, img)
+/*
+        const success = await upload.recipe(userId, recipeName, recipeTag, recipeType, recipeTime, recipeSteps, recipeIngredients, img)
 
         if (success.success === true) {
             res.redirect('/recipe/form')
         } else {
             res.send('Algo salio mal').redirect('/recipe/form')
         }
-
+*/
     } catch (error) {
         console.log(error)
     }
