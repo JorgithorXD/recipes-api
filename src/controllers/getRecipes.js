@@ -31,8 +31,7 @@ async function _AllRecipes() {
                 *
             ),
             recipes_src(
-                main_img,
-                second_img
+                img
             )
         `)
 
