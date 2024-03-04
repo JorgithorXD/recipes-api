@@ -41,6 +41,7 @@ async function register(email, password, name, username, user_last_name, user_pf
                         user_last_name
                     },
                 ])
+
             if (profileError) {
                 console.error('Error al guardar datos personales:', profileError.message);
                 return { success: false, error: profileError.message }

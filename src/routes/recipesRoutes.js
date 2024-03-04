@@ -16,12 +16,26 @@ const uploads = multer({ storage: storage });
 
 router.post('/all-data', uploads.array('recipeImage'), async (req, res) => {
     try {
-        const { recipeName, recipeType, recipeTag, recipeTime, recipeTimeUnit, recipeIngredient, recipeIngreientUnitCount, recipeIngredientCount, recipeSteps } = req.body
-        const userId = req.cookies['logged-user-id'] ?? null
+        var { recipeName, recipeType, recipeTag, recipeTime, recipeTimeUnit, recipeIngredient, recipeIngreientUnitCount, recipeIngredientCount, recipeSteps } = req.body
+
+        recipeTag = Array.isArray(recipeTag) ? recipeTag : [recipeTag]
+        recipeType = Array.isArray(recipeType) ? recipeType : [recipeType]
+        recipeTime = Array.isArray(recipeTime) ? recipeTime : [recipeTime]
+        recipeSteps = Array.isArray(recipeSteps) ? recipeSteps : [recipeSteps]
+        recipeIngredient = Array.isArray(recipeIngredient) ? recipeIngredient : [recipeIngredient]
+
+        const userId = req.cookies['logged-user-id'] ?? 'f659951b-43ba-4704-b662-0edb234bba0c'
 
         const img = await uploadMultipleImages(req.files)
+        console.log(img)
 
         const success  = await upload.recipe(userId, recipeName, recipeTag, recipeType, recipeTime, recipeSteps, recipeIngredient, img)
+
+        if (success.success === true) {
+            res.redirect('/recipe/form')
+        } else {
+            res.send('Algo salio mal').redirect('/recipe/form')
+        }
 
     } catch (error) {
         console.log(error)
