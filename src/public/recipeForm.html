@@ -26,9 +26,14 @@
                 </li>
             </ul>
             <h3>Categoria de la receta</h3>
-            <select name="recipeType" class="recipeType">
-                <option hidden>Elige la categoria de la receta</option>
-            </select>
+            <ul class="cat">
+                <input type="button" value="Agregar otra categoria" class="new-cat-button">
+                <li>
+                    <select name="recipeType" class="recipeType">
+                        <option hidden>Elige la categoria de la receta</option>
+                    </select>
+                </li>
+            </ul>
             <h3>Tiempo de realizacion</h3>
             <div>
                 <div class="timer">
@@ -100,6 +105,7 @@
         const $newTag = document.querySelector('.new-tag-button')
         const $newLi = document.querySelector('.add-new-li')
         const $newStep = document.querySelector('.add-new-step')
+        const $newCat = document.querySelector('.new-cat-button')
         const $selectContainer = document.querySelector('.tags')
         var tags
 
@@ -176,6 +182,21 @@
             $selectContainer.appendChild(li)
         }
 
+        function addSelectType() {
+            const li = document.createElement('li')
+            const select = document.createElement('select')
+            select.setAttribute('name', 'recipeType')
+            select.setAttribute('class', 'recipeType')
+
+            const option = document.createElement('option')
+            option.innerText = 'Elige la categoria de la receta'
+            option.hidden = true
+
+            select.appendChild(option)
+            li.appendChild(select)
+            document.querySelector('.cat').appendChild(li)
+        }
+
         const data = await fetchTag()
         const dataType = await fetchTypes()
         console.log(data, dataType)
@@ -232,6 +253,13 @@
             addStepLi()
         })
 
+        $newCat.addEventListener('click', (evt) => {
+            evt.preventDefault()
+            addSelectType()
+
+            refreshSelectType(dataType)
+        })
+
 
 
         function refreshSelect(r) {
@@ -242,6 +270,23 @@
                         const optionTag = document.createElement('option')
                         optionTag.setAttribute('value', tag.tag_id)
                         optionTag.innerText = tag.name
+
+                        $select[i].appendChild(optionTag)
+                    })
+                } catch (error) {
+                    console.log(error)
+                }
+            })
+        }
+
+        function refreshSelectType(r) {
+            $select = document.querySelectorAll('.recipeType')
+            $select.forEach((e, i) => {
+                try {
+                    r.map(tag => {
+                        const optionTag = document.createElement('option')
+                        optionTag.setAttribute('value', tag.categoty_id)
+                        optionTag.innerText = tag.category
 
                         $select[i].appendChild(optionTag)
                     })
@@ -342,8 +387,8 @@
         margin: 1.25rem 0;
         font-size: 1rem;
     }
-    
-    a{ 
+
+    a {
         font-size: 1.25rem;
         padding: 0.25rem 1rem;
         border-radius: 4px;
