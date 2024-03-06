@@ -1,6 +1,6 @@
 import { supabase } from '../services/supabase.js'
 
-async function basicRecipe(user_id, recipe_name, recipe_tag, recipe_type, recipe_time, recipe_steps, recipe_ingredients) {
+async function basicRecipe(user_id, recipe_name, recipe_tag, recipe_type, recipe_time, recipe_steps, recipe_ingredients, recipe_time_unit, recipe_ingredient_amount, recipe_ingredient_unit) {
     try {
         const { data, error } = await supabase
             .from('recipes_basic')
@@ -11,7 +11,10 @@ async function basicRecipe(user_id, recipe_name, recipe_tag, recipe_type, recipe
                 recipe_type: recipe_type,
                 recipe_time: recipe_time,
                 recipe_steps: recipe_steps,
-                recipe_ingredients: recipe_ingredients
+                recipe_ingredients: recipe_ingredients,
+                recipe_time_unit: recipe_time_unit, 
+                recipe_ingredient_amount: recipe_ingredient_amount, 
+                recipe_ingredient_unit: recipe_ingredient_unit
             }]).select('recipe_id')
 
         if (error) {
@@ -64,9 +67,9 @@ async function relation(id, img_id) {
     }
 }
 
-async function recipe(user_id, recipe_name, recipe_tag, recipe_type, recipe_time, recipe_steps, recipe_ingredients, img) {
+async function recipe(user_id, recipe_name, recipe_tag, recipe_type, recipe_time, recipe_steps, recipe_ingredients, img, recipe_time_unit, recipe_ingredient_amount, recipe_ingredient_unit) {
     try {
-        const { data: id } = await basicRecipe(user_id, recipe_name, recipe_tag, recipe_type, recipe_time, recipe_steps, recipe_ingredients)
+        const { data: id } = await basicRecipe(user_id, recipe_name, recipe_tag, recipe_type, recipe_time, recipe_steps, recipe_ingredients, recipe_time_unit, recipe_ingredient_amount, recipe_ingredient_unit)
         var recipe_id = id[0].recipe_id
         console.log('Id de la receta: ' + recipe_id)
 

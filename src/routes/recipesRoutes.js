@@ -22,49 +22,21 @@ router.post('/all-data', uploads.array('recipeImage'), async (req, res) => {
     try {
         var { recipeName, recipeType, recipeTag, recipeTime, recipeTimeUnit, recipeIngredient, recipeIngredientUnit, recipeIngredientUnitCount, recipeSteps } = req.body
 
-        recipeIngredient = Array.from(recipeIngredient)
-        recipeIngredientUnitCount = Array.from(recipeIngredientUnitCount)
-        recipeIngredientUnit = Array.from(recipeIngredientUnit)
-
-        recipeTime = {
-            from:
-            {
-                time: recipeTime[0],
-                unit: recipeTimeUnit[0]
-            }
-            ,
-            to: {
-                time: recipeTime[1],
-                unit: recipeTimeUnit[1]
-            },
-        }
-
-        var recipeIngredients = {
-            ingredientCount: recipeIngredient.length,
-            ingredients: []
-        }
-
-        recipeIngredient.forEach((e, i) => {
-            const ingredientObject = {
-                name: recipeIngredient[i],
-                amount: recipeIngredientUnitCount[i],
-                unit: recipeIngredientUnit[i]
-            }
-            recipeIngredients.ingredients.push(ingredientObject)
-        })
-
+        recipeIngredient = Array.isArray(recipeIngredient) ? recipeIngredient : [recipeIngredient]
+        recipeIngredientUnitCount = Array.isArray(recipeIngredientUnitCount) ? recipeIngredientUnitCount : [recipeIngredientUnitCount]
+        recipeIngredientUnit = Array.isArray(recipeIngredientUnit) ? recipeIngredientUnit : [recipeIngredientUnit]
         recipeTag = Array.isArray(recipeTag) ? recipeTag : [recipeTag]
         recipeType = Array.isArray(recipeType) ? recipeType : [recipeType]
         recipeTime = Array.isArray(recipeTime) ? recipeTime : [recipeTime]
         recipeSteps = Array.isArray(recipeSteps) ? recipeSteps : [recipeSteps]
-        recipeIngredients = Array.isArray(recipeIngredients) ? recipeIngredients : [recipeIngredients]
+        recipeTimeUnit = Array.isArray(recipeTimeUnit) ? recipeTimeUnit : [recipeTimeUnit]
 
         const userId = req.cookies['logged-user-id'] ?? 'f659951b-43ba-4704-b662-0edb234bba0c'
 
         const img = await uploadMultipleImages(req.files)
         console.log(img)
 
-        const success = await upload.recipe(userId, recipeName, recipeTag, recipeType, recipeTime, recipeSteps, recipeIngredients, img)
+        const success = await upload.recipe(userId, recipeName, recipeTag, recipeType, recipeTime, recipeSteps, recipeIngredient, img, recipeTimeUnit, recipeIngredientUnit, recipeIngredientUnitCount)
 
         if (success.success === true) {
             res.redirect('/recipe/form')
