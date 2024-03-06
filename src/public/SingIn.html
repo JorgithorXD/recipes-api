@@ -1,11 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registrar</title>
 </head>
+
 <body>
+    <h1>Registrarse</h1>
     <form action="/user/register" method="post" enctype="multipart/form-data">
 
         <label for="pfp_img">Foto de perfil</label>
@@ -29,11 +32,62 @@
         <input type="submit" value="Registrar">
     </form>
 </body>
+
 </html>
 
 <style>
+    body {
+        width: 100dvw;
+        height: 100dvh;
+
+    }
+
+    html {
+        font-size: 16px;
+        font-family: system-ui, sans-serif;
+    }
+
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        border: 0;
+    }
+
+    h1 {
+        font-size: 3rem;
+        text-align: center;
+        margin: 2rem 0 0 0;
+    }
+
+    input {
+        min-height: 2rem;
+        width: 85%;
+        margin: 0 auto;
+        padding-left: 8px;
+    }
+
+    input[type="submit"] {
+        margin: 2rem auto;
+        font-size: 1.3rem;
+        padding: 0.5rem 0;
+        border-radius: 8px;
+    }
+
     form {
-        display:flex;
+        display: flex;
         flex-direction: column;
+
+        width: 96%;
+        margin: 3rem auto;
+        background: #ccc;
+        border-radius: 4px;
+        padding: 0.5rem;
+    }
+
+    label { 
+        width: 85%;
+        font-size: 1.5rem;
+        margin: 0.25rem 0 0.15rem 1.5rem;
     }
 </style>
