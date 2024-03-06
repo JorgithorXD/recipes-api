@@ -6,82 +6,34 @@ import { dirname, join } from 'path'
 import multer from 'multer'
 import fs from 'fs'
 import https from 'https'
+import { uploadMultipleImages, uploadSingleImage } from '../controllers/uploadMethods.js'
 
 
 const router = express.Router()
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 
-const storage = multer.diskStorage({
-    destination: join(__dirname, '../public/uploads/'),
-    filename: (req, file, cb) => {
-        cb(null, file.originalname)
-    }
-})
-
+const storage = multer.memoryStorage();
 const uploads = multer({
-    storage,
-    dest: join(__dirname, '../public/uploads/')
+    storage: storage,
+    preservePath: true
 })
 
-router.get('/test', (req,res) => {
+router.get('/test', (req, res) => {
     res.sendFile(join(__dirname, '../public/uploadImage.html'))
 })
 
-router.post('/post/single-img', uploads.single('recipeImage'), async (req, res) => {
+router.post('/post/single-img', uploads.array('recipeImage'), async (req, res) => {
     try {
-        if (!req.file) {
+        if (!req.files) {
             return res.status(400).send('No se ha proporcionado ningún archivo');
         }
 
-        var fileBuffer = fs.readFileSync(req.file.path)
-        var base64Image = fileBuffer.toString('base64')
+        console.log(req.files)
+        const images = await uploadMultipleImages(req.files)
 
-        var data = JSON.stringify({
-            'image': base64Image,
-            'type': 'base64'
-        })
+        res.json({ images })
 
-        var options = {
-            hostname: 'api.imgur.com',
-            path: '/3/image',
-            method: 'POST',
-            headers: {
-                'Authorization': 'Client-ID dd17b3a0b3a3f03',
-                'Content-Type': 'application/json',
-                'Content-Length': data.length
-            }
-        }
-
-        var imgurReq = https.request(options, function (imgurRes) {
-            var responseData = ''
-
-            imgurRes.on('data', function (chunk) {
-                responseData += chunk
-            })
-
-            imgurRes.on('end', function () {
-                var responseJson = JSON.parse(responseData)
-                if (imgurRes.statusCode === 200) {
-                    fs.unlink(req.file.path, (err) => {
-                        if (err) {
-                            console.error('Error al eliminar el archivo:', err)
-                        }
-                    })
-                    res.json(responseJson.data.link)
-                } else {
-                    res.status(imgurRes.statusCode).send('Error al subir la imagen a Imgur')
-                }
-            })
-        })
-
-        imgurReq.on('error', function (error) {
-            console.error(error)
-            res.status(500).send('Error interno del servidor')
-        })
-
-        imgurReq.write(data)
-        imgurReq.end()
     } catch (error) {
         console.log(error)
     }

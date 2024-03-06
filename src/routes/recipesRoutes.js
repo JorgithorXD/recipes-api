@@ -13,9 +13,12 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 
 const storage = multer.memoryStorage();
-const uploads = multer({ storage: storage });
+const uploads = multer({ 
+    storage: storage,
+    preservePath: true
+})
 
-router.post('/all-data', uploads.array('recipeImage'), async (req, res) => {
+router.post('/all-data', uploads.fields([{ name: 'recipeImage', maxCount: 1 }, { name: 'stepImage', maxCount: 10 }]), async (req, res) => {
     try {
         /*var { recipeName, recipeType, recipeTag, recipeTime, recipeTimeUnit, recipeIngredient, recipeIngredientUnit, recipeIngredientUnitCount, recipeSteps } = req.body
 
@@ -60,15 +63,15 @@ router.post('/all-data', uploads.array('recipeImage'), async (req, res) => {
 */
         const img = await uploadMultipleImages(req.files)
         console.log(img)
-/*
-        const success = await upload.recipe(userId, recipeName, recipeTag, recipeType, recipeTime, recipeSteps, recipeIngredients, img)
-
-        if (success.success === true) {
-            res.redirect('/recipe/form')
-        } else {
-            res.send('Algo salio mal').redirect('/recipe/form')
-        }
-*/
+        /*
+                const success = await upload.recipe(userId, recipeName, recipeTag, recipeType, recipeTime, recipeSteps, recipeIngredients, img)
+        
+                if (success.success === true) {
+                    res.redirect('/recipe/form')
+                } else {
+                    res.send('Algo salio mal').redirect('/recipe/form')
+                }
+        */
     } catch (error) {
         console.log(error)
     }
