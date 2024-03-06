@@ -13,14 +13,14 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 
 const storage = multer.memoryStorage();
-const uploads = multer({ 
+const uploads = multer({
     storage: storage,
     preservePath: true
 })
 
-router.post('/all-data', uploads.fields([{ name: 'recipeImage', maxCount: 1 }, { name: 'stepImage', maxCount: 10 }]), async (req, res) => {
+router.post('/all-data', uploads.array('recipeImage'), async (req, res) => {
     try {
-        /*var { recipeName, recipeType, recipeTag, recipeTime, recipeTimeUnit, recipeIngredient, recipeIngredientUnit, recipeIngredientUnitCount, recipeSteps } = req.body
+        var { recipeName, recipeType, recipeTag, recipeTime, recipeTimeUnit, recipeIngredient, recipeIngredientUnit, recipeIngredientUnitCount, recipeSteps } = req.body
 
         recipeIngredient = Array.from(recipeIngredient)
         recipeIngredientUnitCount = Array.from(recipeIngredientUnitCount)
@@ -60,18 +60,18 @@ router.post('/all-data', uploads.fields([{ name: 'recipeImage', maxCount: 1 }, {
         recipeIngredients = Array.isArray(recipeIngredients) ? recipeIngredients : [recipeIngredients]
 
         const userId = req.cookies['logged-user-id'] ?? 'f659951b-43ba-4704-b662-0edb234bba0c'
-*/
+
         const img = await uploadMultipleImages(req.files)
         console.log(img)
-        /*
-                const success = await upload.recipe(userId, recipeName, recipeTag, recipeType, recipeTime, recipeSteps, recipeIngredients, img)
-        
-                if (success.success === true) {
-                    res.redirect('/recipe/form')
-                } else {
-                    res.send('Algo salio mal').redirect('/recipe/form')
-                }
-        */
+
+        const success = await upload.recipe(userId, recipeName, recipeTag, recipeType, recipeTime, recipeSteps, recipeIngredients, img)
+
+        if (success.success === true) {
+            res.redirect('/recipe/form')
+        } else {
+            res.send('Algo salio mal').redirect('/recipe/form')
+        }
+
     } catch (error) {
         console.log(error)
     }
