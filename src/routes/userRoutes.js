@@ -24,7 +24,14 @@ router.get('/form/register', (req, res) => {
 })
 
 router.get('/form/login', (req, res) => {
-    res.sendFile(join(__dirname, '../public/logIn.html'))
+    if (req.cookies['logged-user-id'] == null || req.cookies['logged-user-id'] == "" || req.cookies['logged-user-id'] == undefined) {
+        res.sendFile(join(__dirname, '../public/logIn.html'))
+    } else {
+        res.send(`
+            <h1>Ya estas registrado</h1>
+            <a href="/">Volver al menu</a>
+        `)
+    }
 })
 
 router.post('/login', async (req, res) => {
@@ -52,7 +59,7 @@ router.post('/register', uploads.single('pfp_img'), async (req, res) => {
 
         const { success, error } = await register(user_mail, user_password, user_name, user_username, user_last_name, pfp)
 
-        if(success) {
+        if (success) {
             res.redirect('/user/form/login')
         } else {
             res.redirect('/user/form/register')
