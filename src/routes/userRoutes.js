@@ -81,13 +81,19 @@ router.get('/get-data/:id', async (req, res) => {
 
 router.get('/profile/:id', async (req, res) => {
     try {
-        const userId = req.cookies['logged-user-id']
-
-        res.render('profile', {userId, page: 'profile'})
+        res.render('profile', {userId: req.cookies['logged-user-id'], page: 'profile'})
     } catch (error) {
         console.log(error)
     }
 })
 
+router.post('/profile/close', async (req, res) => {
+    try {
+        res.clearCookie('logged-user-id')
+        res.redirect('/')
+    } catch (error) {
+        console.log(error)
+    }
+})
 
 export default router
