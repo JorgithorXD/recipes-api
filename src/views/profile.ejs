@@ -8,14 +8,12 @@
 </head>
 
 <body>
-    <%- include('partials/header') %>
+    <%- include('partials/header', {userId, page}) %>
 
         <h1>
             <%= userId %>
         </h1>
         <img alt="Imagen del perfil" loading="lazy">
-
-
 </body>
 
 </html>

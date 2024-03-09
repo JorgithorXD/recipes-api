@@ -83,7 +83,7 @@ router.get('/profile/:id', async (req, res) => {
     try {
         const userId = req.cookies['logged-user-id']
 
-        res.render('profile', {userId})
+        res.render('profile', {userId, page: 'profile'})
     } catch (error) {
         console.log(error)
     }

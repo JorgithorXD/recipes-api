@@ -8,7 +8,6 @@ import bodyParser from 'body-parser'
 import foodRoutes from './routes/foodRoutes.js'
 import dotenv from 'dotenv'
 import cookieParser from "cookie-parser"
-import ejs from 'ejs'
 
 dotenv.config()
 
@@ -24,11 +23,14 @@ app.use(bodyParser.json())
 
 app.use(express.static(join(__dirname, '/public')))
 app.use(express.json())
-app.use(express.urlencoded({ extended: false}))
+app.use(express.urlencoded({ extended: false }))
 app.use(cookieParser())
 
 app.get('/', (req, res) => {
-    res.sendFile('./public/index.html')
+    const userId = req.cookies['logged-user-id']
+    console.log(userId)
+
+    res.render('index', { userId, page: 'index' })
 })
 
 app.use('/recipe', recipesRoutes)

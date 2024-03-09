@@ -1,6 +1,14 @@
 <header>
     <nav>
-        <a href="/"> <- Volver al inicio</a>
+        <% if(page != 'index') {%>
+            <a class="header" href="/">Volver al inicio</a>
+        <%}%>
+        <% if(userId === undefined) {%>
+            <a class="header" href="/user/form/login">Iniciar sesion</a>
+            <a class="header" href="/user/form/register">Registrarse</a>
+        <%} else {%>
+            <a class="profile header" href="/user/profile/<%= userId %>">Perfil</a>
+        <%}%>
     </nav>
 </header>
 
@@ -9,7 +17,7 @@
         font-size: 16px;
     }
 
-    a {
+    a.header {
         text-decoration: none;
         color: white;
         font-size: 1.5rem;
@@ -17,16 +25,25 @@
         margin: 0 0 0 0.25rem;
     }
 
-    a:hover {
+    a.profile {
+        font-size: 2rem;
+    }
+
+    a.header:hover {
         background: #303030;
         border-radius: 0.5rem;
         transition: background 0.3s ease-in-out
     }
 
     header {
-        height: 4rem;
+        height: 5rem;
         background-color: black;
         display: flex;
         align-items: center;
+        justify-content: end;
+    }
+
+    nav {
+        margin-inline: 0.5rem;
     }
 </style>

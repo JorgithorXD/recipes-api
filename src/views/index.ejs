@@ -6,6 +6,7 @@
     <title>Recetario</title>
 </head>
 <body>
+    <%- include('partials/header', {userId, page}) %>
     <h1>Recetario API</h1>
     <p>Una pequeña API para la aplicacion Recetly. 
         Parte del proyecto para la materia: Desarrollo de aplicaciones moviles para iOS.
@@ -14,8 +15,6 @@
     <ul>
         <li><a href="/recipe/all">Ver todas las recetas</a></li>
         <li><a href="/recipe/form">Agregar una receta</a></li>
-        <li><a href="/user/form/register">Registrarse</a></li>
-        <li><a href="/user/form/login">Iniciar sesion</a></li>
     </ul>
 </body>
 </html>
