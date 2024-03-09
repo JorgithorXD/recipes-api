@@ -1,8 +1,8 @@
 import express from 'express'
 import { fileURLToPath } from 'url'
 import { dirname, join } from 'path'
-import { register } from '../controllers/singUp.js'
-import { checkPassword } from '../controllers/logIn.js'
+import { register } from '../controllers/authMethods/singUp.js'
+import { checkPassword, getUserData } from '../controllers/authMethods/logIn.js'
 import multer from 'multer'
 import { uploadSingleImage } from '../controllers/uploadMethods.js'
 
@@ -27,10 +27,7 @@ router.get('/form/login', (req, res) => {
     if (req.cookies['logged-user-id'] == null || req.cookies['logged-user-id'] == "" || req.cookies['logged-user-id'] == undefined) {
         res.sendFile(join(__dirname, '../public/logIn.html'))
     } else {
-        res.send(`
-            <h1>Ya estas registrado</h1>
-            <a href="/">Volver al menu</a>
-        `)
+        res.sendFile(join(__dirname, '../public/userProfile.html'))
     }
 })
 
@@ -44,7 +41,7 @@ router.post('/login', async (req, res) => {
             res.cookie('logged-user-id', id, { httpOnly: true })
             res.redirect('/')
         } else {
-            res.send('<h1>Correo o contraseña incorrectos</h1>').redirect('/user/form/login')
+            res.send('<h1>Correo o contraseña incorrectos</h1>')
         }
     } catch (error) {
         console.log(error)
@@ -68,5 +65,19 @@ router.post('/register', uploads.single('pfp_img'), async (req, res) => {
         console.log(error)
     }
 })
+
+router.get('/get-data/:id', async (req, res) => {
+    try {
+        const { id } = req.params
+
+        const { data } = await getUserData(id)
+
+        res.json(data)
+    } catch (error) {
+        console.log(error)
+    }
+
+})
+
 
 export default router
