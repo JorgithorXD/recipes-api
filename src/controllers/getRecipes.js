@@ -1,6 +1,6 @@
 import { supabase } from "../services/supabase.js"
 
-const _All = async (table) => {
+const All = async (table) => {
     try {
         const { data, error } = await supabase
             .from(table)
@@ -15,14 +15,14 @@ const _All = async (table) => {
             return [];
         }
 
-        return data;
+        return data
     } catch (error) {
         console.error('Error al obtener datos de Supabase:', error);
         throw error;
     }
 }
 
-async function _AllRecipes() {
+async function AllRecipes() {
     try {
         const { data, error } = await supabase
         .from('recipes_relation')
@@ -45,7 +45,26 @@ async function _AllRecipes() {
     }
 }
 
-export const get = {
-    _All,
-    _AllRecipes
+async function byId(id) {
+    try {
+        const { data, error } = await supabase
+        .from('recipes_basic')
+        .select('*')
+        .eq('user_id', id)
+
+        if (error) {
+            throw new Error('Error al obtener recetas con imágenes: ' + error.message);
+        }
+
+        return {data}
+    } catch (error) {
+        throw new Error('Error al obtener recetas con imágenes: ' + error.message)
+    }
+}
+
+
+export const getRecipes = {
+    All,
+    AllRecipes,
+    byId
 }

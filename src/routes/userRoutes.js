@@ -5,6 +5,7 @@ import { register } from '../controllers/authMethods/singUp.js'
 import { checkPassword, getUserData } from '../controllers/authMethods/logIn.js'
 import multer from 'multer'
 import { uploadSingleImage } from '../controllers/uploadMethods.js'
+import { getRecipes } from '../controllers/getRecipes.js'
 
 const router = express.Router()
 
@@ -70,18 +71,29 @@ router.get('/get-data/:id', async (req, res) => {
     try {
         const { id } = req.params
 
-        const { data, error } = await getUserData(id)
-        console.log(data)
-        res.json(data)
+        const { data: user, error: userError } = await getUserData(id)
+        const { data: userRecipes, error: recipesError } = await getRecipes.byId(id)
+
+        if (userError || recipesError) {
+            throw new Error('Error al obtener datos del usuario o recetas')
+        }
+
+        const userDataWithRecipes = {
+            user: user[0], 
+            recipes: userRecipes
+        }
+
+        res.json(userDataWithRecipes)
     } catch (error) {
         console.log(error)
+        res.status(500).json({ error: 'Error interno del servidor' })
     }
-
 })
 
 router.get('/profile/:id', async (req, res) => {
     try {
-        res.render('profile', {userId: req.cookies['logged-user-id'], page: 'profile'})
+        const {id} = req.params
+        res.render('profile', { userId: id, page: 'profile' })
     } catch (error) {
         console.log(error)
     }

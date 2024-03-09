@@ -8,7 +8,7 @@
             <a class="header" href="/user/form/register">Registrarse</a>
         <%} else if (userId != undefined && page != 'profile') {%>
             <a class="profile header" href="/user/profile/<%= userId %>">Perfil</a>
-        <%} else if (page === 'profile') {%>
+        <%} else if (page === 'profile' && userId != undefined) {%>
             <form action="/user/profile/close" method="post">
                 <input type="submit" class="profile-close header" value="Cerrar sesion">
             </form>

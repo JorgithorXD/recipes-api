@@ -1,6 +1,6 @@
 import express from 'express'
 import { upload } from '../controllers/uploadRecipe.js'
-import { get } from '../controllers/getRecipes.js'
+import { getRecipes } from '../controllers/getRecipes.js'
 import { fileURLToPath } from 'url'
 import { dirname, join } from 'path'
 import multer from 'multer'
@@ -36,7 +36,7 @@ router.post('/all-data', uploads.array('recipeImage'), async (req, res) => {
         const img = await uploadMultipleImages(req.files)
         console.log(img)
 
-        const success = await upload.recipe(userId, recipeName, recipeTag, recipeType, recipeTime, recipeSteps, recipeIngredient, img, recipeTimeUnit, recipeIngredientUnit, recipeIngredientUnitCount)
+        const success = await upload.basicRecipe(userId, recipeName, recipeTag, recipeType, recipeTime, recipeSteps, recipeIngredient,  recipeTimeUnit, recipeIngredientUnit, recipeIngredientUnitCount, img)
 
         if (success.success === true) {
             res.redirect('/recipe/form')
@@ -51,7 +51,7 @@ router.post('/all-data', uploads.array('recipeImage'), async (req, res) => {
 
 router.get('/all', async (req, res) => {
     try {
-        const recipe = await get._AllRecipes()
+        const recipe = await getRecipes.AllRecipes()
         res.json(recipe).status(200)
     } catch (error) {
         console.log('Error ' + error)

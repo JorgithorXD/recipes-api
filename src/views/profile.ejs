@@ -17,6 +17,10 @@
                 <h1></h1>
                 <h2></h2>
             </section>
+
+            <section class="recipes">
+
+            </section>
         </main>
 </body>
 
@@ -28,13 +32,38 @@
         const $pfp = document.querySelector('img')
         const $name = document.querySelector('h2')
         const $username = document.querySelector('h1')
+        const $recipes = document.querySelector('.recipes')
 
         const userData = await fetch(`/user/get-data/${userId}`)
         const data = await userData.json()
+        console.log(data)
 
-        $pfp.setAttribute('src', data[0].user_pfp)
-        $username.innerText = data[0].user_username
-        $name.innerText = data[0].user_name + ' ' + data[0].user_last_name
+        $pfp.setAttribute('src', data.user.user_pfp)
+        $username.innerText = data.user.user_username
+        $name.innerText = data.user.user_name + ' ' + data.user.user_last_name
+
+        const recipes = Array.from(data.recipes)
+        console.log(recipes)
+
+        recipes.forEach(recipe => {
+            recipeCard($recipes, recipe.recipe_name, recipe.recipe_img[0])
+        })
+
+        function recipeCard(father, name, image) {
+            const article = document.createElement('article')
+
+            const h3 = document.createElement('h1')
+            h3.innerText = name
+
+            const img = document.createElement('img')
+            img.setAttribute('src', image)
+
+            article.appendChild(h3)
+            article.appendChild(img)
+
+            father.appendChild(article)
+        }
+
     })
 </script>
 
@@ -61,7 +90,7 @@
         background: green;
     }
 
-    article {
+    article.user-img {
         width: 70%;
         border-radius: 50%;
         background: red;
@@ -80,10 +109,19 @@
         height: 100%;
     }
 
-    section {
+    section.user-data {
         width: 96%;
         min-height: 10rem;
+        height: auto;
         background: blue;
+        margin: 0.5rem auto;
+        padding: 0.5rem;
+    }
+
+    section.recipes {
+        width: 96%;
+        min-height: 10rem;
+        background: rgb(0, 255, 213);
         margin: 0.5rem auto;
         padding: 0.5rem;
     }

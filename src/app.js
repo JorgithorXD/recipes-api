@@ -28,7 +28,6 @@ app.use(cookieParser())
 
 app.get('/', (req, res) => {
     const userId = req.cookies['logged-user-id']
-    console.log(userId)
 
     res.render('index', { userId: req.cookies['logged-user-id'], page: 'index' })
 })

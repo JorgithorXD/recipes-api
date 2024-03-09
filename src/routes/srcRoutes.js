@@ -1,6 +1,6 @@
 import express from 'express'
 import { upload } from '../controllers/uploadRecipe.js'
-import { get } from '../controllers/getRecipes.js'
+import { getRecipes } from '../controllers/getRecipes.js'
 import { fileURLToPath } from 'url'
 import { dirname, join } from 'path'
 import multer from 'multer'
