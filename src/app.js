@@ -8,6 +8,7 @@ import bodyParser from 'body-parser'
 import foodRoutes from './routes/foodRoutes.js'
 import dotenv from 'dotenv'
 import cookieParser from "cookie-parser"
+import ejs from 'ejs'
 
 dotenv.config()
 
@@ -15,6 +16,9 @@ const app = express()
 const PORT = process.env.PORT ?? 4121
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
+
+app.set('view engine', 'ejs')
+app.set('views', join(__dirname, './views'))
 
 app.use(bodyParser.json())
 

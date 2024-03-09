@@ -30,7 +30,7 @@ async function getUserData(id) {
             throw error
         }
 
-        return { data }
+        return { data, error }
 
     } catch (error) {
         console.log(error)

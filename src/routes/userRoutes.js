@@ -70,13 +70,23 @@ router.get('/get-data/:id', async (req, res) => {
     try {
         const { id } = req.params
 
-        const { data } = await getUserData(id)
-
+        const { data, error } = await getUserData(id)
+        console.log(data)
         res.json(data)
     } catch (error) {
         console.log(error)
     }
 
+})
+
+router.get('/profile/:id', async (req, res) => {
+    try {
+        const userId = req.cookies['logged-user-id']
+
+        res.render('profile', {userId})
+    } catch (error) {
+        console.log(error)
+    }
 })
 
 

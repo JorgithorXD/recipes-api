@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <%- include('partials/header') %>
+
+        <h1>
+            <%= userId %>
+        </h1>
+        <img alt="Imagen del perfil" loading="lazy">
+
+
+</body>
+
+</html>
+
+<script>
+    const userId = '<%= userId %>'
+    document.addEventListener('DOMContentLoaded', async () => {
+        const $pfp = document.querySelector('img')
+
+
+
+        const userData = await fetch(`/user/get-data/${userId}`)
+        const data = await userData.json()
+
+        $pfp.setAttribute('src', data[0].user_pfp)
+    })
+</script>
+
+<style>
+    html {
+        font-size: 16px;
+    }
+
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        height: 100%;
+    }
+</style>
