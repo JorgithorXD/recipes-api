@@ -80,6 +80,7 @@ router.get('/get-data/:id', async (req, res) => {
 
         const userDataWithRecipes = {
             user: user[0], 
+            recipeCount: userRecipes.length,
             recipes: userRecipes
         }
 
