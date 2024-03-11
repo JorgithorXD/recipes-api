@@ -1,6 +1,6 @@
 import { supabase } from "../services/supabase.js"
 
-const All = async (table) => {
+const getAllFrom = async (table) => {
     try {
         const { data, error } = await supabase
             .from(table)
@@ -22,7 +22,7 @@ const All = async (table) => {
     }
 }
 
-async function AllRecipes() {
+async function getAllRecipes() {
     try {
         const { data, error } = await supabase
         .from('recipes_basic')
@@ -38,7 +38,7 @@ async function AllRecipes() {
     }
 }
 
-async function byId(id) {
+async function getRecipeByUserId(id) {
     try {
         const { data, error } = await supabase
         .from('recipes_basic')
@@ -55,7 +55,7 @@ async function byId(id) {
     }
 }
 
-async function byRecipeId(id) {
+async function getRecipeByRecipeId(id) {
     try {
         const { data, error } = await supabase
         .from('recipes_basic')
@@ -72,10 +72,18 @@ async function byRecipeId(id) {
     }
 }
 
+async function getUserDataWithRecipes (id) {
+    try {
+        
+    } catch (error) {
+        
+    }
+}
 
-export const getRecipes = {
-    All,
-    AllRecipes,
-    byId,
-    byRecipeId
+
+export  {
+    getAllFrom,
+    getAllRecipes,
+    getRecipeByUserId,
+    getRecipeByRecipeId
 }

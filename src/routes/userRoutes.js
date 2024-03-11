@@ -5,7 +5,7 @@ import { register } from '../controllers/authMethods/singUp.js'
 import { checkPassword, getUserData } from '../controllers/authMethods/logIn.js'
 import multer from 'multer'
 import { uploadSingleImage } from '../controllers/uploadMethods.js'
-import { getRecipes } from '../controllers/getRecipes.js'
+import { getRecipeByUserId } from '../controllers/getRecipes.js'
 
 const router = express.Router()
 
@@ -72,7 +72,7 @@ router.get('/get-data/:id', async (req, res) => {
         const { id } = req.params
 
         const { data: user, error: userError } = await getUserData(id)
-        const { data: userRecipes, error: recipesError } = await getRecipes.byId(id)
+        const { data: userRecipes, error: recipesError } = await getRecipeByUserId(id)
 
         if (userError || recipesError) {
             throw new Error('Error al obtener datos del usuario o recetas')

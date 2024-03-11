@@ -1,6 +1,6 @@
 import express from 'express'
 import { upload } from '../controllers/uploadRecipe.js'
-import { getRecipes } from '../controllers/getRecipes.js'
+import { getAllRecipes, getRecipeByRecipeId } from '../controllers/getRecipes.js'
 import { fileURLToPath } from 'url'
 import { dirname, join } from 'path'
 import multer from 'multer'
@@ -62,7 +62,7 @@ router.get('/view/:id', async (req, res) => {
 
 router.get('/all', async (req, res) => {
     try {
-        const recipe = await getRecipes.AllRecipes()
+        const recipe = await getAllRecipes()
         res.json(recipe).status(200)
     } catch (error) {
         console.log('Error ' + error)
@@ -73,7 +73,7 @@ router.get('/get/:id', async (req, res) => {
     try {
         const { id } = req.params
 
-        const recipe = await getRecipes.byRecipeId(id)
+        const recipe = await getRecipeByRecipeId(id)
         res.json(recipe).status(200)
     } catch (error) {
         console.log('Error ' + error)
