@@ -55,9 +55,27 @@ async function byId(id) {
     }
 }
 
+async function byRecipeId(id) {
+    try {
+        const { data, error } = await supabase
+        .from('recipes_basic')
+        .select('*')
+        .eq('recipe_id', id)
+
+        if (error) {
+            throw new Error('Error al obtener recetas con imágenes: ' + error.message);
+        }
+
+        return {data}
+    } catch (error) {
+        throw new Error('Error al obtener recetas con imágenes: ' + error.message)
+    }
+}
+
 
 export const getRecipes = {
     All,
     AllRecipes,
-    byId
+    byId,
+    byRecipeId
 }

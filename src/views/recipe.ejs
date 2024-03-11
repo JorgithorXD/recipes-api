@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+</head>
+
+<body>
+    <%- include('partials/header', {userId, page:'profile'}) %>
+
+        <main>
+            <img src="" alt="Imagen principal de la receta">
+            <h1 class="recipe-name"></h1>
+            <h2>De <span class="recipe-time-1"></span> a <span class="recipe-time-2"></span></h2>
+        </main>
+</body>
+
+</html>
+
+<script>
+    const recipeId = '<%= recipeId %>'
+    const mainImg = document.querySelector('img')
+    const recipeName = document.querySelector('h1')
+
+    document.addEventListener('DOMContentLoaded', async () => {
+        async function getRecipe() {
+            const recipeData = await fetch(`/recipe/get/${recipeId}`)
+            const data = await recipeData.json()
+
+            return data.data
+        }
+
+        const recipe = await getRecipe()
+
+        console.log(recipe)
+
+        mainImg.setAttribute('src', recipe[0].recipe_img[0])
+        recipeName.innerText = recipe[0].recipe_name
+
+
+    })
+</script>
+
+<style>
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+    
+    body {
+        width: 100dvw;
+    }
+
+    main {
+        width: auto;
+    }
+
+    img {
+        width: 90%;
+        aspect-ratio: 16/9;
+        object-fit: cover;
+        min-width: 400px;
+        max-width: 720px;
+        margin: 0 auto;
+    }
+</style>

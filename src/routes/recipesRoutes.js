@@ -36,7 +36,7 @@ router.post('/all-data', uploads.array('recipeImage'), async (req, res) => {
         const img = await uploadMultipleImages(req.files)
         console.log(img)
 
-        const success = await upload.basicRecipe(userId, recipeName, recipeTag, recipeType, recipeTime, recipeSteps, recipeIngredient,  recipeTimeUnit, recipeIngredientUnit, recipeIngredientUnitCount, img)
+        const success = await upload.basicRecipe(userId, recipeName, recipeTag, recipeType, recipeTime, recipeSteps, recipeIngredient, recipeTimeUnit, recipeIngredientUnit, recipeIngredientUnitCount, img)
 
         if (success.success === true) {
             res.redirect('/recipe/form')
@@ -49,9 +49,31 @@ router.post('/all-data', uploads.array('recipeImage'), async (req, res) => {
     }
 })
 
+router.get('/view/:id', async (req, res) => {
+    try {
+        const { id } = req.params
+        const userId = req.cookies['logged-user-id']
+
+        res.render('recipe', { userId: userId, page: 'profile', recipeId: id })
+    } catch (error) {
+        console.log(error)
+    }
+})
+
 router.get('/all', async (req, res) => {
     try {
         const recipe = await getRecipes.AllRecipes()
+        res.json(recipe).status(200)
+    } catch (error) {
+        console.log('Error ' + error)
+    }
+})
+
+router.get('/get/:id', async (req, res) => {
+    try {
+        const { id } = req.params
+
+        const recipe = await getRecipes.byRecipeId(id)
         res.json(recipe).status(200)
     } catch (error) {
         console.log('Error ' + error)
