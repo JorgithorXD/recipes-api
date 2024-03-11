@@ -21,4 +21,13 @@ router.get('/type', async (req, res) => {
     }
 })
 
+router.get('/units', async (req, res) => {
+    try {
+        const data = await getFoodData.foodUnits()
+        res.json(data).status(200)
+    } catch (error) {
+        console.error(error)
+    }
+})
+
 export default router
