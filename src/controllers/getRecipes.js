@@ -25,18 +25,11 @@ const All = async (table) => {
 async function AllRecipes() {
     try {
         const { data, error } = await supabase
-        .from('recipes_relation')
-        .select(`
-            recipes_basic(
-                *
-            ),
-            recipes_src(
-                img
-            )
-        `)
+        .from('recipes_basic')
+        .select('*')
 
         if (error) {
-            throw new Error('Error al obtener recetas con imágenes: ' + error.message);
+            throw new Error('Error al obtener las recetas: ' + error.message);
         }
 
         return data

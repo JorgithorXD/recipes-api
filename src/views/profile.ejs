@@ -10,7 +10,7 @@
 <body>
     <%- include('partials/header', {userId, page:'profile'}) %>
         <main>
-            <article class="user-img">
+            <article class="user-img user-data">
                 <img alt="Imagen de perfil">
             </article>
             <section class="user-data">
@@ -46,22 +46,24 @@
         console.log(recipes)
 
         recipes.forEach(recipe => {
-            recipeCard($recipes, recipe.recipe_name, recipe.recipe_img[0])
+            recipeCard($recipes, recipe.recipe_name, recipe.recipe_img[0], null)
         })
 
-        function recipeCard(father, name, image) {
-            const article = document.createElement('article')
+        function recipeCard(father, name, image, href) {
+            const a = document.createElement('a')
+            a.setAttribute('href', href)
 
-            const h3 = document.createElement('h1')
-            h3.innerText = name
+            const span = document.createElement('span')
+            span.innerText = name
 
             const img = document.createElement('img')
             img.setAttribute('src', image)
+            img.setAttribute('class', 'recipe')
 
-            article.appendChild(h3)
-            article.appendChild(img)
+            a.appendChild(span)
+            a.appendChild(img)
 
-            father.appendChild(article)
+            father.appendChild(a)
         }
 
     })
@@ -91,7 +93,7 @@
     }
 
     article.user-img {
-        width: 70%;
+        width: 50%;
         border-radius: 50%;
         background: red;
         aspect-ratio: 1;
@@ -124,9 +126,20 @@
         background: rgb(0, 255, 213);
         margin: 0.5rem auto;
         padding: 0.5rem;
+
+        & a {
+            display: flex;
+            flex-direction: column;
+        }
     }
 
     h1 {
         font-size: 2rem;
+    }
+
+    img.recipe {
+        aspect-ratio: 16/9;
+        width: 50%;
+        object-fit: cover;
     }
 </style>
