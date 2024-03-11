@@ -43,27 +43,49 @@
         $name.innerText = data.user.user_name + ' ' + data.user.user_last_name
 
         const recipes = Array.from(data.recipes)
+        const recipeCount = data.recipeCount
         console.log(recipes)
 
-        recipes.forEach(recipe => {
-            recipeCard($recipes, recipe.recipe_name, recipe.recipe_img[0], null)
+        for (i = 0; i < recipeCount; i++) {
+            recipeCard($recipes)
+        }
+
+        const recipeCardA = Array.from($recipes.querySelectorAll('.recipeCard'))
+        const recipeCardImg = Array.from($recipes.querySelectorAll('.recipeCard img'))
+        const recipeCardSpan = Array.from($recipes.querySelectorAll('.recipeCard span'))
+        console.log(recipeCardImg)
+        console.log(recipeCardA)
+
+        recipeCardA.forEach((r, i) => {
+            cardAtributte(recipeCardImg[i], 'src', data.recipes[i].recipe_img[0])
+            cardAtributte(recipeCardA[i], 'href', `/recipe/view/${data.recipes[i].recipe_id}`)
+            cardText(recipeCardSpan[i], data.recipes[i].recipe_name)
         })
 
-        function recipeCard(father, name, image, href) {
+        function recipeCard(father) {
             const a = document.createElement('a')
-            a.setAttribute('href', href)
+            a.setAttribute('href', '')
+            a.setAttribute('class', 'recipeCard')
 
             const span = document.createElement('span')
-            span.innerText = name
 
             const img = document.createElement('img')
-            img.setAttribute('src', image)
+            img.setAttribute('src', null)
             img.setAttribute('class', 'recipe')
+            img.setAttribute('alt', 'Imagen de una receta')
 
             a.appendChild(span)
             a.appendChild(img)
 
             father.appendChild(a)
+        }
+
+        function cardAtributte (element, attribute, value) {
+            element.setAttribute(attribute, value)
+        }
+
+        function cardText (element, value) {
+            element.innerText = value
         }
 
     })
@@ -139,7 +161,7 @@
 
     img.recipe {
         aspect-ratio: 16/9;
-        width: 50%;
+        width: 400px;
         object-fit: cover;
     }
 </style>
