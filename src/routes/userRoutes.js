@@ -5,7 +5,7 @@ import { register } from '../controllers/authMethods/singUp.js'
 import { checkPassword, getUserData } from '../controllers/authMethods/logIn.js'
 import multer from 'multer'
 import { uploadSingleImage } from '../controllers/uploadMethods.js'
-import { getUserDataWithRecipes } from '../controllers/getUserData.js'
+import { getUserDataWithRecipes, getUserFavoriteRecipes } from '../controllers/getUserData.js'
 
 const router = express.Router()
 
@@ -77,6 +77,19 @@ router.get('/get-data/:id', async (req, res) => {
         const { id } = req.params
 
         const data = await getUserDataWithRecipes(id)
+
+        res.json(data)
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({ error: 'Error interno del servidor' })
+    }
+})
+
+router.get('/get-data/:id/favorites', async (req, res) => {
+    try {
+        const { id } = req.params
+
+        const data = await getUserFavoriteRecipes(id)
 
         res.json(data)
     } catch (error) {
