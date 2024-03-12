@@ -1,4 +1,5 @@
 import { supabase } from "../services/supabase.js"
+import * as get from '../controllers/getFoodData.js'
 
 const getAllFrom = async (table) => {
     try {
@@ -25,8 +26,8 @@ const getAllFrom = async (table) => {
 async function getAllRecipes() {
     try {
         const { data, error } = await supabase
-        .from('recipes_basic')
-        .select('*')
+            .from('recipes_basic')
+            .select('*')
 
         if (error) {
             throw new Error('Error al obtener las recetas: ' + error.message);
@@ -41,15 +42,15 @@ async function getAllRecipes() {
 async function getRecipeByUserId(id) {
     try {
         const { data, error } = await supabase
-        .from('recipes_basic')
-        .select('*')
-        .eq('user_id', id)
+            .from('recipes_basic')
+            .select('*')
+            .eq('user_id', id)
 
         if (error) {
             throw new Error('Error al obtener recetas con imágenes: ' + error.message);
         }
 
-        return {data}
+        return { data }
     } catch (error) {
         throw new Error('Error al obtener recetas con imágenes: ' + error.message)
     }
@@ -58,21 +59,21 @@ async function getRecipeByUserId(id) {
 async function getRecipeByRecipeId(id) {
     try {
         const { data, error } = await supabase
-        .from('recipes_basic')
-        .select('*')
-        .eq('recipe_id', id)
+            .from('recipes_basic')
+            .select('*')
+            .eq('recipe_id', id)
 
         if (error) {
             throw new Error('Error al obtener recetas con imágenes: ' + error.message);
         }
 
-        return {data}
+        return { data }
     } catch (error) {
         throw new Error('Error al obtener recetas con imágenes: ' + error.message)
     }
 }
 
-export  {
+export {
     getAllFrom,
     getAllRecipes,
     getRecipeByUserId,

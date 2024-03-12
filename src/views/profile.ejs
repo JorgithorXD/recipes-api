@@ -10,18 +10,20 @@
 <body>
     <%- include('partials/header', {userId, page:'profile'}) %>
         <main>
-            <article class="user-img user-data">
-                <img alt="Imagen de perfil" src="<%= userData.user.user_pfp %>">
-            </article>
-            <section class="user-data">
-                <span>
-                    <%= userData.user.user_username %>
-                </span>
-                <br>
-                <span>
-                    <%= userData.user.user_name %>
+            <section class="data-container">
+                <article class="user-img">
+                    <img alt="Imagen de perfil" src="<%= userData.user.user_pfp %>">
+                </article>
+                <article class="user-data">
+                    <span class="h1">
+                        <%= userData.user.user_username %>
+                    </span>
+                    <br>
+                    <span class="h2">
+                        <%= userData.user.user_name %>
                         <%= userData.user.user_last_name %>
-                </span>
+                    </span>
+                </article>
             </section>
 
             <h1>Recetas de <%= userData.user.user_username %>
@@ -29,13 +31,16 @@
 
             <section class="recipes">
                 <ul>
-                    <% userData.recipes.forEach((recipe, index) => { %>
+                    <% userData.recipes.forEach((recipe, index)=> { %>
                         <li>
                             <a href="/recipe/view/<%= recipe.recipe_id %>">
-                                <img src="<%= recipe.recipe_img[0] %>" class="recipe" alt="Imagen de la receta <%= recipe.recipe_id %>">
+                                <img src="<%= recipe.recipe_img[0] %>" class="recipe"
+                                    alt="Imagen de la receta <%= recipe.recipe_id %>">
+                                <span class="recipe-h1"><%= recipe.recipe_name %></span>
+                                <span class="recipe-h2"></span>
                             </a>
                         </li>
-                    <% }) %>
+                        <% }) %>
                 </ul>
             </section>
         </main>
@@ -66,12 +71,11 @@
         background: green;
     }
 
-    article.user-img {
-        width: 50%;
+    .user-img {
+        width: 300px;
         border-radius: 50%;
         background: red;
         aspect-ratio: 1;
-        margin: 0 auto;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -85,7 +89,7 @@
         height: 100%;
     }
 
-    section.user-data {
+    .user-data {
         width: 96%;
         height: auto;
         background: blue;
@@ -103,16 +107,44 @@
         & a {
             display: flex;
             flex-direction: column;
+            text-decoration: none;
         }
     }
 
     h1 {
         font-size: 2rem;
+        padding-inline: 1rem;
     }
 
-    img.recipe {
+    a {
+        & img.recipe {
         aspect-ratio: 16/9;
-        width: 400px;
+        width: 96%;
         object-fit: cover;
+        object-position: center center;
+        margin: 0 auto;
+    }
+    }
+
+    .data-container {
+        display: flex;
+        gap: 0.5rem;
+        padding: 0.5rem;
+    }
+
+    span.h1 {
+        font-size: 2.25rem;
+        font-weight: bold;
+    }
+
+    span.h2 {
+        font-size: 1.25rem;
+    }
+
+    ul {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
     }
 </style>
