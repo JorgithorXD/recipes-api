@@ -1,11 +1,9 @@
 import { supabase } from '../../services/supabase.js'
 import bcrypt from 'bcrypt'
 
-const saltRounds = 10
-
 async function singUp(password) {
     try {
-        const hashPassword = await bcrypt.hash(password, saltRounds)
+        const hashPassword = await bcrypt.hash(password, 10)
         
         const { data, error } = await supabase
             .from('user_private_information')
