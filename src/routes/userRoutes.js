@@ -6,6 +6,7 @@ import { checkPassword, getUserData } from '../controllers/authMethods/logIn.js'
 import multer from 'multer'
 import { uploadSingleImage } from '../controllers/uploadMethods.js'
 import { getRecipeByUserId } from '../controllers/getRecipes.js'
+import { getUserDataWithRecipes } from '../controllers/getUserData.js'
 
 const router = express.Router()
 
@@ -71,20 +72,9 @@ router.get('/get-data/:id', async (req, res) => {
     try {
         const { id } = req.params
 
-        const { data: user, error: userError } = await getUserData(id)
-        const { data: userRecipes, error: recipesError } = await getRecipeByUserId(id)
+        const data = await getUserDataWithRecipes(id)
 
-        if (userError || recipesError) {
-            throw new Error('Error al obtener datos del usuario o recetas')
-        }
-
-        const userDataWithRecipes = {
-            user: user[0], 
-            recipeCount: userRecipes.length,
-            recipes: userRecipes
-        }
-
-        res.json(userDataWithRecipes)
+        res.json(data)
     } catch (error) {
         console.log(error)
         res.status(500).json({ error: 'Error interno del servidor' })
@@ -94,7 +84,9 @@ router.get('/get-data/:id', async (req, res) => {
 router.get('/profile/:id', async (req, res) => {
     try {
         const {id} = req.params
-        res.render('profile', { userId: id, page: 'profile' })
+        const data = await getUserDataWithRecipes(id)
+
+       res.render('profile', { userId: id, page: 'profile', userData: data, message: null, error: null })
     } catch (error) {
         console.log(error)
     }

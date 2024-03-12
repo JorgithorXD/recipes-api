@@ -11,86 +11,37 @@
     <%- include('partials/header', {userId, page:'profile'}) %>
         <main>
             <article class="user-img user-data">
-                <img alt="Imagen de perfil">
+                <img alt="Imagen de perfil" src="<%= userData.user.user_pfp %>">
             </article>
             <section class="user-data">
-                <h1></h1>
-                <h2></h2>
+                <span>
+                    <%= userData.user.user_username %>
+                </span>
+                <br>
+                <span>
+                    <%= userData.user.user_name %>
+                        <%= userData.user.user_last_name %>
+                </span>
             </section>
 
-            <section class="recipes">
+            <h1>Recetas de <%= userData.user.user_username %>
+            </h1>
 
+            <section class="recipes">
+                <ul>
+                    <% userData.recipes.forEach((recipe, index) => { %>
+                        <li>
+                            <a href="/recipe/view/<%= recipe.recipe_id %>">
+                                <img src="<%= recipe.recipe_img[0] %>" class="recipe" alt="Imagen de la receta <%= recipe.recipe_id %>">
+                            </a>
+                        </li>
+                    <% }) %>
+                </ul>
             </section>
         </main>
 </body>
 
 </html>
-
-<script>
-    const userId = '<%= userId %>'
-    document.addEventListener('DOMContentLoaded', async () => {
-        const $pfp = document.querySelector('img')
-        const $name = document.querySelector('h2')
-        const $username = document.querySelector('h1')
-        const $recipes = document.querySelector('.recipes')
-
-        const userData = await fetch(`/user/get-data/${userId}`)
-        const data = await userData.json()
-        console.log(data)
-
-        $pfp.setAttribute('src', data.user.user_pfp)
-        $username.innerText = data.user.user_username
-        $name.innerText = data.user.user_name + ' ' + data.user.user_last_name
-
-        const recipes = Array.from(data.recipes)
-        const recipeCount = data.recipeCount
-        console.log(recipes)
-
-        for (i = 0; i < recipeCount; i++) {
-            recipeCard($recipes)
-        }
-
-        const recipeCardA = Array.from($recipes.querySelectorAll('.recipeCard'))
-        const recipeCardImg = Array.from($recipes.querySelectorAll('.recipeCard img'))
-        const recipeCardSpan = Array.from($recipes.querySelectorAll('.recipeCard span'))
-        console.log(recipeCardImg)
-        console.log(recipeCardA)
-
-        recipeCardA.forEach((r, i) => {
-            cardAtributte(recipeCardImg[i], 'src', data.recipes[i].recipe_img[0])
-            cardAtributte(recipeCardA[i], 'href', `/recipe/view/${data.recipes[i].recipe_id}`)
-            cardText(recipeCardSpan[i], data.recipes[i].recipe_name)
-        })
-
-        function recipeCard(father) {
-            const a = document.createElement('a')
-            a.setAttribute('href', '')
-            a.setAttribute('class', 'recipeCard')
-
-            const span = document.createElement('span')
-
-            const img = document.createElement('img')
-            img.setAttribute('src', null)
-            img.setAttribute('class', 'recipe')
-            img.setAttribute('alt', 'Imagen de una receta')
-
-            a.appendChild(span)
-            a.appendChild(img)
-
-            father.appendChild(a)
-        }
-
-        function cardAtributte (element, attribute, value) {
-            element.setAttribute(attribute, value)
-        }
-
-        function cardText (element, value) {
-            element.innerText = value
-        }
-
-    })
-</script>
-
 <style>
     html {
         font-size: 16px;
@@ -105,11 +56,12 @@
     body {
         height: 100dvh;
         width: 100dvw;
+        overflow-x: hidden;
     }
 
     main {
         width: 98%;
-        height: 100%;
+        min-height: 100%;
         margin: 0 auto;
         background: green;
     }
@@ -135,7 +87,6 @@
 
     section.user-data {
         width: 96%;
-        min-height: 10rem;
         height: auto;
         background: blue;
         margin: 0.5rem auto;

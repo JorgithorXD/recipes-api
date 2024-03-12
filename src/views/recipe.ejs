@@ -20,27 +20,7 @@
 </html>
 
 <script>
-    const recipeId = '<%= recipeId %>'
-    const mainImg = document.querySelector('img')
-    const recipeName = document.querySelector('h1')
 
-    document.addEventListener('DOMContentLoaded', async () => {
-        async function getRecipe() {
-            const recipeData = await fetch(`/recipe/get/${recipeId}`)
-            const data = await recipeData.json()
-
-            return data.data
-        }
-
-        const recipe = await getRecipe()
-
-        console.log(recipe)
-
-        mainImg.setAttribute('src', recipe[0].recipe_img[0])
-        recipeName.innerText = recipe[0].recipe_name
-
-
-    })
 </script>
 
 <style>

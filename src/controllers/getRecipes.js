@@ -72,15 +72,6 @@ async function getRecipeByRecipeId(id) {
     }
 }
 
-async function getUserDataWithRecipes (id) {
-    try {
-        
-    } catch (error) {
-        
-    }
-}
-
-
 export  {
     getAllFrom,
     getAllRecipes,
