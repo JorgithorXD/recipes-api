@@ -1,5 +1,4 @@
-import { supabase } from "../services/supabase.js"
-import * as get from '../controllers/getFoodData.js'
+import { supabase } from "../../services/supabase.js"
 
 const getAllFrom = async (table) => {
     try {
@@ -50,7 +49,7 @@ async function getRecipeByUserId(id) {
             throw new Error('Error al obtener recetas con imágenes: ' + error.message);
         }
 
-        return { data }
+        return { data, error }
     } catch (error) {
         throw new Error('Error al obtener recetas con imágenes: ' + error.message)
     }

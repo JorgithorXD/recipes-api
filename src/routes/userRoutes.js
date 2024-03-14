@@ -4,8 +4,9 @@ import { dirname, join } from 'path'
 import { register } from '../controllers/authMethods/singUp.js'
 import { checkPassword, getUserData } from '../controllers/authMethods/logIn.js'
 import multer from 'multer'
-import { uploadSingleImage } from '../controllers/uploadMethods.js'
-import { getUserDataWithRecipes, getUserFavoriteRecipes } from '../controllers/getUserData.js'
+import { uploadSingleImage } from '../controllers/postMethods/uploadMethods.js'
+import { getUserDataWithRecipes, getUserFavoriteRecipes, getAllUserData } from '../controllers/getMethods/getUserData.js'
+import { setFavoriteRecipe, updateFavoriteRecipes } from '../controllers/postMethods/uploadUserData.js'
 
 const router = express.Router()
 
@@ -57,7 +58,7 @@ router.post('/register', uploads.single('pfp_img'), async (req, res) => {
         if (req.file && req.file.length > 0) {
             pfp = await uploadSingleImage(req.file)
         } else {
-            pfp = 'https://ik.imagekit.io/uv3u01crv/default_profile_img.jpg?updatedAt=1710204258799'
+            pfp = 'https://ik.imagekit.io/uv3u01crv/User_default.webp'
         }
 
         const { success, error } = await register(user_mail, user_password, user_name, user_username, user_last_name, pfp)
@@ -76,7 +77,7 @@ router.get('/get-data/:id', async (req, res) => {
     try {
         const { id } = req.params
 
-        const data = await getUserDataWithRecipes(id)
+        const data = await getAllUserData(id)
 
         res.json(data)
     } catch (error) {
@@ -101,7 +102,18 @@ router.get('/get-data/:id/favorites', async (req, res) => {
 router.get('/profile/:id', async (req, res) => {
     try {
         const { id } = req.params
-        const data = await getUserDataWithRecipes(id)
+        const data = await getAllUserData(id)
+
+        res.json(data)
+    } catch (error) {
+        console.log(error)
+    }
+})
+
+router.get('/profile/view/:id', async (req, res) => {
+    try {
+        const { id } = req.params
+        const data = await getAllUserData(id)
 
         res.render('profile', { userId: id, page: 'profile', userData: data, message: null, error: null })
     } catch (error) {
@@ -115,6 +127,29 @@ router.post('/profile/close', async (req, res) => {
         res.redirect('/')
     } catch (error) {
         console.log(error)
+    }
+})
+
+router.post('/set/:user_id/favorite/:recipe_id', async (req, res) => {
+    try {
+        const { user_id, recipe_id } = req.params
+
+        var favoriteArray = await updateFavoriteRecipes(user_id)
+
+        if (favoriteArray.includes(recipe_id)) {
+            res.json({
+                data: 'La receta ya esta agregada',
+                error: 'La receta ya esta agregada',
+            })
+        } else {
+            favoriteArray.push(recipe_id)
+            
+            const { data, favoriteError } = await setFavoriteRecipe(user_id, favoriteArray)
+            console.log(data)
+            res.json(data)
+        }
+    } catch (error) {
+
     }
 })
 

@@ -1,11 +1,11 @@
 import express from 'express'
-import { upload } from '../controllers/uploadRecipe.js'
+import { upload } from '../controllers/postMethods/uploadRecipe.js'
 import { fileURLToPath } from 'url'
 import { dirname, join } from 'path'
 import multer from 'multer'
 import fs from 'fs'
 import https from 'https'
-import { uploadMultipleImages, uploadSingleImage } from '../controllers/uploadMethods.js'
+import { uploadMultipleImages, uploadSingleImage } from '../controllers/postMethods/uploadMethods.js'
 
 
 const router = express.Router()
@@ -19,7 +19,7 @@ const uploads = multer({
 })
 
 router.get('/test', (req, res) => {
-    res.sendFile(join(__dirname, '../public/uploadImage.html'))
+    res.sendFile(join(__dirname, '../public/recipeImgForm.html'))
 })
 
 router.post('/post/single-img', uploads.array('recipeImage'), async (req, res) => {

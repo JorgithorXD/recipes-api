@@ -1,10 +1,10 @@
 import express from 'express'
-import { upload } from '../controllers/uploadRecipe.js'
-import { getAllRecipes, getRecipeByRecipeId } from '../controllers/getRecipes.js'
+import { upload } from '../controllers/postMethods/uploadRecipe.js'
+import { getAllRecipes, getRecipeByRecipeId } from '../controllers/getMethods/getRecipes.js'
 import { fileURLToPath } from 'url'
 import { dirname, join } from 'path'
 import multer from 'multer'
-import { uploadSingleImage, uploadMultipleImages } from '../controllers/uploadMethods.js'
+import { uploadSingleImage, uploadMultipleImages } from '../controllers/postMethods/uploadMethods.js'
 import { isLogged } from '../controllers/middelwares.js'
 import fs from 'fs/promises'
 

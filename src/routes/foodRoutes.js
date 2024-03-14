@@ -1,5 +1,5 @@
 import express from 'express'
-import { getFoodData } from '../controllers/getFoodData.js'
+import { getFoodData } from '../controllers/getMethods/getFoodData.js'
 
 const router = express.Router()
 

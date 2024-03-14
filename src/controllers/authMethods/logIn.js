@@ -37,24 +37,6 @@ async function getUserData(id) {
     }
 }
 
-async function getUserDataFrom(table ,id) {
-    try {
-        const { data, error } = await supabase
-            .from(table)
-            .select('recipes_id')
-            .eq('user_id', id)
-
-        if (error) {
-            throw error
-        }
-
-        return { data, error }
-
-    } catch (error) {
-        console.log(error)
-    }
-}
-
 async function getPrivateInfo(id) {
     try {
         const { data, error } = await supabase
@@ -95,6 +77,5 @@ async function checkPassword(email, password) {
 
 export {
     checkPassword,
-    getUserData,
-    getUserDataFrom
+    getUserData
 }

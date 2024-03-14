@@ -1,4 +1,4 @@
-import { supabase } from '../services/supabase.js'
+import { supabase } from '../../services/supabase.js'
 
 async function basicRecipe(user_id, recipe_name, recipe_tag, recipe_type, recipe_time, recipe_steps, recipe_ingredients, recipe_time_unit, recipe_ingredient_amount, recipe_ingredient_unit, img) {
     try {
