@@ -28,12 +28,16 @@ async function setFavoriteRecipe(id, array) {
 async function updateFavoriteRecipes(id) {
     try {
         const { data } = await getUserFavoriteRecipes(id)
-
-        var recipeFavorite = Array.from(data[0].recipes_id)
-        console.log('Array creado: ' + recipeFavorite)
-
+        
+        let recipeFavorite = []
+        if (data[0] && data[0].recipes_id !== null) {
+            recipeFavorite = Array.from(data[0].recipes_id)
+            console.log('Array creado: ' + recipeFavorite)
+        } else {
+            console.log('No se encontraron recetas favoritas para el usuario o la lista de recetas está vacía')
+        }
+        
         return recipeFavorite
-
     } catch (error) {
         console.log(error)
     }

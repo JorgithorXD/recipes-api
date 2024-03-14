@@ -60,6 +60,17 @@ router.get('/view/:id', async (req, res) => {
     }
 })
 
+router.get('/all/view', async (req, res) => {
+    try {
+        const recipes = await getAllRecipes()
+        const userId = req.cookies['logged-user-id']
+
+        res.render('allRecipes', { data: recipes, userId: userId, page: 'all_recipes' })
+    } catch (error) {
+
+    }
+})
+
 router.get('/all', async (req, res) => {
     try {
         const recipe = await getAllRecipes()

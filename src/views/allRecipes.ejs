@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+</head>
+
+<body>
+    <%- include('partials/header', {userId, page}) %>
+
+        <ul>
+            <% data.forEach(recipe=> { %>
+                <li>
+                    <%- include('partials/recipeCard', {recipe, userId}) %>
+                </li>
+                <% }) %>
+        </ul>
+</body>
+
+<style>
+    ul {
+        gap: 8px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    li {
+        position: relative;
+    }
+</style>
+
+</html>

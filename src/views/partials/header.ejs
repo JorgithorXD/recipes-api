@@ -3,12 +3,12 @@
         <% if(page != 'index') {%>
             <a class="header" href="/">Volver al inicio</a>
         <%}%>
-        <% if(userId === undefined) {%>
+        <% if(userId === undefined && page != 'profile') {%>
             <a class="header" href="/user/form/login">Iniciar sesion</a>
             <a class="header" href="/user/form/register">Registrarse</a>
-        <%} else if (userId != undefined && page != 'profile') {%>
+        <%}  if (userId != undefined && page != 'profile') {%>
             <a class="profile header" href="/user/profile/view/<%= userId %>">Perfil</a>
-        <%} else if (page === 'profile' && userId != undefined) {%>
+        <%}  if (page === 'profile' && userId != undefined) {%>
             <form action="/user/profile/close" method="post">
                 <input type="submit" class="profile-close header" value="Cerrar sesion">
             </form>

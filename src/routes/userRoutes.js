@@ -139,14 +139,15 @@ router.post('/set/:user_id/favorite/:recipe_id', async (req, res) => {
         if (favoriteArray.includes(recipe_id)) {
             res.json({
                 data: 'La receta ya esta agregada',
-                error: 'La receta ya esta agregada',
             })
         } else {
             favoriteArray.push(recipe_id)
             
-            const { data, favoriteError } = await setFavoriteRecipe(user_id, favoriteArray)
+            const { data } = await setFavoriteRecipe(user_id, favoriteArray)
             console.log(data)
-            res.json(data)
+            res.json({
+                data: 'Receta añadida a favoritos'
+            })
         }
     } catch (error) {
 

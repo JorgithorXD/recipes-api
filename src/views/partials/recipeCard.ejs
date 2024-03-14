@@ -1,0 +1,85 @@
+<article>
+    <img src="<%= recipe.recipe_img[0] %>" alt="Imagen de la receta">
+    <section>
+        <h1>
+            <%= recipe.recipe_name %>
+        </h1>
+        <button onclick="addToFavorites('<%= userId %>', '<%= recipe.recipe_id %>')">Agregar a
+            favoritos</button>
+    </section>
+</article>
+
+<script>
+    function addToFavorites(userId, recipeId) {
+        fetch(`/user/set/${userId}/favorite/${recipeId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error)
+                } else {
+                    alert(data.data)
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error)
+                alert('Hubo un error al agregar la receta a favoritos.')
+            })
+    }
+</script>
+
+<style>
+    * {
+        box-sizing: border-box;
+        border: 0;
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        width: 100dvw;
+        height: 100dvh;
+    }
+
+    article {
+        width: 90%;
+        padding: 0.75rem;
+        margin: 0 auto;
+        background: rgb(0, 0, 0);
+        border-radius: 8px;
+        max-width: 360px;
+    }
+
+    h1 {
+        font-size: 2rem;
+        color: white;
+    }
+
+    img {
+        width: 100%;
+        max-width: 480px;
+        aspect-ratio: 16/9;
+        object-fit: cover;
+        border-radius: 4px;
+    }
+
+    button {
+        right: 2.25rem;
+        bottom: 1rem;
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+        background: white;
+        color: black;
+    }
+    
+    section {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+</style>
