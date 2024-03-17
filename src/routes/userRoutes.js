@@ -33,7 +33,7 @@ router.get('/form/login', (req, res) => {
     }
 })
 
-router.post('/login', async (req, res) => {
+router.post('/view/login', async (req, res) => {
     try {
         const { emailInput, passwordInput } = req.body
 
@@ -50,7 +50,54 @@ router.post('/login', async (req, res) => {
     }
 })
 
+router.post('/login', async (req, res) => {
+    try {
+        const { emailInput, passwordInput } = req.body
+
+        const { success, id } = await checkPassword(emailInput, passwordInput)
+
+        if (success == false) {
+            res.json({
+                message: 'El correo o contraseña es incorrecto',
+                status: 'Error'
+            })
+        } else {
+            res.json({
+                message: 'Inicio de sesion exitoso',
+                status: 'Logged',
+                id
+            })
+        }
+
+    } catch (error) {
+        console.log(error)
+    }
+})
+
 router.post('/register', uploads.single('pfp_img'), async (req, res) => {
+    try {
+        const { user_name, user_last_name, user_username, user_mail, user_password } = req.body
+        var pfp
+
+        if (req.file && req.file.length > 0) {
+            pfp = await uploadSingleImage(req.file)
+        } else {
+            pfp = 'https://ik.imagekit.io/uv3u01crv/User_default.webp'
+        }
+
+        const { success, error } = await register(user_mail, user_password, user_name, user_username, user_last_name, pfp)
+
+        if (error) {
+            throw new Error('Hubo un error al crear la cuenta')
+        }
+
+        res.json(success)
+    } catch (error) {
+        console.log(error)
+    }
+})
+
+router.post('/view/register', uploads.single('pfp_img'), async (req, res) => {
     try {
         const { user_name, user_last_name, user_username, user_mail, user_password } = req.body
         var pfp
@@ -142,7 +189,7 @@ router.post('/set/:user_id/favorite/:recipe_id', async (req, res) => {
             })
         } else {
             favoriteArray.push(recipe_id)
-            
+
             const { data } = await setFavoriteRecipe(user_id, favoriteArray)
             console.log(data)
             res.json({

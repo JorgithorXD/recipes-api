@@ -68,7 +68,9 @@ async function checkPassword(email, password) {
                 id
             }
         } else {
-            return { success: false }
+            return { 
+                success: false
+            }
         }
     } catch (error) {
         console.log(error)

@@ -7,6 +7,7 @@ import multer from 'multer'
 import { uploadSingleImage, uploadMultipleImages } from '../controllers/postMethods/uploadMethods.js'
 import { isLogged } from '../controllers/middelwares.js'
 import fs from 'fs/promises'
+import { getUserFavoriteRecipes } from '../controllers/getMethods/getUserData.js'
 
 const router = express.Router()
 const __filename = fileURLToPath(import.meta.url)
@@ -64,7 +65,7 @@ router.get('/all/view', async (req, res) => {
     try {
         const recipes = await getAllRecipes()
         const userId = req.cookies['logged-user-id']
-
+        
         res.render('allRecipes', { data: recipes, userId: userId, page: 'all_recipes' })
     } catch (error) {
 

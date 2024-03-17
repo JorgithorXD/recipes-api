@@ -11,7 +11,7 @@
     <%- include('partials/header', {userId, page}) %>
 
         <ul>
-            <% data.forEach(recipe=> { %>
+            <% data.forEach((recipe, i)=> { %>
                 <li>
                     <%- include('partials/recipeCard', {recipe, userId}) %>
                 </li>
