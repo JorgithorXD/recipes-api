@@ -1,5 +1,4 @@
 import { supabase } from "../../services/supabase.js"
-import bcrypt from 'bcrypt'
 import { comparePasswords } from "./decrypPassword.js"
 
 async function getUserId(email) {
@@ -9,13 +8,20 @@ async function getUserId(email) {
             .select('user_id')
             .eq('user_email', email)
 
-        if (error) {
-            throw error
+        if (!data || data.length === 0) {
+            throw new Error('No se encontró el correo especificado')
         }
-        return data[0].user_id
+        return {
+            id: data[0].user_id,
+            error
+        }
 
     } catch (error) {
         console.log(error)
+        return {
+            id: null,
+            error
+        }
     }
 }
 
@@ -27,13 +33,14 @@ async function getUserData(id) {
             .eq('user_id', id)
 
         if (error) {
-            throw error
+            throw new Error('Ha ocurrido un error al obtener los datos del usuario: ' + error.message)
         }
 
         return { data, error }
 
     } catch (error) {
         console.log(error)
+        return { data: null, error }
     }
 }
 
@@ -45,35 +52,53 @@ async function getPrivateInfo(id) {
             .eq('user_id', id)
 
         if (error) {
-            throw error
+            throw new Error('Error al obtener la contraseña del usuario: ' + error.message)
         }
 
-        return data[0].user_password
+        if (!data || data.length === 0 || !data[0].user_password) {
+            throw new Error('No se encontró la contraseña del usuario')
+        }
+
+        return {
+            password: data[0].user_password,
+            error
+        }
 
     } catch (error) {
-        console.log(error)
+        console.log('Error al obtener la contraseña del usuario: ' + error)
+        return {
+            password: null,
+            error
+        }
     }
 }
 
-async function checkPassword(email, password) {
+async function checkPassword(email, userPassword) {
     try {
-        const id = await getUserId(email)
-        const dbPassword = await getPrivateInfo(id)
+        const { id, error: idError } = await getUserId(email)
+        if (idError) {
+            throw new Error(idError.message)
+        }
 
-        const authPassword = await comparePasswords(password, dbPassword)
+        const { password, error: passwordError } = await getPrivateInfo(id)
+        if (passwordError) {
+            throw new Error(passwordError.message)
+        }
 
-        if (authPassword) {
-            return {
-                success: true,
-                id
-            }
-        } else {
-            return { 
-                success: false
-            }
+        const authPassword = await comparePasswords(userPassword, password)
+
+        return {
+            success: authPassword,
+            error: authPassword ? null : 'Las contraseñas no coinciden',
+            id
         }
     } catch (error) {
         console.log(error)
+
+        return {
+            success: false,
+            error: error.message
+        }
     }
 }
 

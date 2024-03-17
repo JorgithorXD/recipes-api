@@ -54,23 +54,30 @@ router.post('/login', async (req, res) => {
     try {
         const { emailInput, passwordInput } = req.body
 
-        const { success, id } = await checkPassword(emailInput, passwordInput)
+        const { success, error, id } = await checkPassword(emailInput, passwordInput)
 
-        if (success == false) {
+        if (!success) {
             res.json({
-                message: 'El correo o contraseña es incorrecto',
-                status: 'Error'
+                message: 'Ha ocurrido un error',
+                status: 'Error',
+                error,
+                id: null
             })
         } else {
             res.json({
                 message: 'Inicio de sesion exitoso',
                 status: 'Logged',
-                id
+                id,
+                error
             })
         }
 
     } catch (error) {
-        console.log(error)
+        res.json({
+            message: 'Ha ocurrido un error',
+            status: 'Error',
+            error
+        })
     }
 })
 
