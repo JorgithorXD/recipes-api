@@ -50,7 +50,7 @@ router.post('/view/login', async (req, res) => {
     }
 })
 
-router.post('/login', async (req, res) => {
+router.post('/auth/login', async (req, res) => {
     try {
         const { emailInput, passwordInput } = req.body
 
@@ -66,7 +66,7 @@ router.post('/login', async (req, res) => {
         } else {
             res.json({
                 message: 'Inicio de sesion exitoso',
-                status: 'Logged',
+                status: 'Success',
                 id,
                 error
             })

@@ -22,6 +22,11 @@
                 <li>
                     <select name="recipeTag" id="recipeTag">
                         <option hidden>Elige la etiqueta de la receta</option>
+                        <% tagData.map(type=> { %>
+                            <option value="<%= type.tag_id %>">
+                                <%= type.name %>
+                            </option>
+                            <% }) %>
                     </select>
                 </li>
             </ul>
@@ -31,6 +36,11 @@
                 <li>
                     <select name="recipeType" class="recipeType">
                         <option hidden>Elige la categoria de la receta</option>
+                        <% typeData.map(type=> { %>
+                            <option value="<%= type.categoty_id %>">
+                                <%= type.category %>
+                            </option>
+                            <% }) %>
                     </select>
                 </li>
             </ul>
@@ -69,12 +79,11 @@
                                 placeholder="Cantidad">
                             <select name="recipeIngredientUnit" id="recipeIngredientUnit">
                                 <option hidden>Unidad de medida del ingrediente</option>
-                                <option value="1">Miligramos (mg)</option>
-                                <option value="2">Gramos (g)</option>
-                                <option value="3">Kilogramos (kg)</option>
-                                <option value="4">Mililitros (ml)</option>
-                                <option value="5">Litros (l)</option>
-                                <option value="6">Piezas (pz)</option>
+                                <% unitData.map(unit=> { %>
+                                    <option value="<%= unit.filter_id %>">
+                                        <%= unit.unit %>
+                                    </option>
+                                    <% }) %>
                             </select>
                         </div>
                     </div>
@@ -88,7 +97,8 @@
                         <label for="recipeSteps">Paso</label>
                         <textarea name="recipeSteps" id="recipeSteps" cols="30" rows="10"
                             placeholder="El paso de como hacerlo aqui"></textarea>
-                        <input type="file" name="recipeImage">
+                        <input type="file" name="stepImage">
+                        <input type="hidden" name="haveFile" value="false" class="imageStatus">
                     </div>
                 </li>
             </ul>
@@ -109,29 +119,22 @@
         const $selectContainer = document.querySelector('.tags')
         var tags
 
-        async function fetchTag() {
-            try {
-                const dataTags = await fetch('/food/tag')
-                const jsonTag = await dataTags.json()
-
-                return jsonTag
-            } catch (error) {
-                console.error(error)
-                return null
+        function updateFileStatus(input) {
+            const fileStatusInput = input.parentNode.querySelector('.imageStatus');
+            if (input.files.length > 0) {
+                fileStatusInput.value = 'true'
+            } else {
+                fileStatusInput.value = 'false'
             }
         }
 
-        async function fetchTypes() {
-            try {
-                const dataTypes = await fetch('/food/type')
-                const jsonType = await dataTypes.json()
+        var fileInputs = Array.from(document.querySelectorAll('input[name="stepImage"]'))
 
-                return jsonType
-            } catch (error) {
-                console.error(error)
-                return null
-            }
-        }
+        fileInputs.forEach(input => {
+            input.addEventListener('change', () => {
+                updateFileStatus(input)
+            })
+        })
 
         function addIngredientLi() {
             const li = document.createElement('li')
@@ -143,12 +146,9 @@
                                 placeholder="Cantidad">
                             <select name="recipeIngredientUnit" id="recipeIngredientUnit">
                                 <option hidden>Unidad de medida del ingrediente</option>
-                                <option value="1">Miligramos (mg)</option>
-                                <option value="2">Gramos (g)</option>
-                                <option value="3">Kilogramos (kg)</option>
-                                <option value="4">Mililitros (ml)</option>
-                                <option value="5">Litros (l)</option>
-                                <option value="6">Piezas (pz)</option>
+                                <% unitData.map(unit=> { %>
+                                    <option value="<%= unit.filter_id %>"><%= unit.unit %></option>
+                                <% }) %>
                             </select>
                         </div>
                     </div>`
@@ -161,7 +161,8 @@
             li.innerHTML = `<div class="steps">
                         <label for="recipeSteps">Paso</label>
                         <textarea name="recipeSteps" id="recipeSteps" cols="30" rows="10" placeholder="El paso de como hacerlo aqui"></textarea>
-                        <input type="file" name="recipeImage">
+                        <input type="file" name="stepImage">
+                        <input type="hidden" name="haveFile" value="false" class = "imageStatus">
                     </div>`
 
             document.querySelector('.steps-list').appendChild(li)
@@ -197,50 +198,9 @@
             document.querySelector('.cat').appendChild(li)
         }
 
-        const data = await fetchTag()
-        const dataType = await fetchTypes()
-        console.log(data, dataType)
-
-        function setSelectType(r) {
-            try {
-                r.map(type => {
-                    const optionType = document.createElement('option')
-                    optionType.setAttribute('value', type.categoty_id)
-                    optionType.innerText = type.category
-
-                    $selectType.forEach(e => {
-                        e.appendChild(optionType)
-                    })
-                })
-            } catch (error) {
-                console.log(error)
-            }
-        }
-
-        function setSelectData(r) {
-            try {
-                r.map(tag => {
-                    const optionTag = document.createElement('option')
-                    optionTag.setAttribute('value', tag.tag_id)
-                    optionTag.innerText = tag.name
-
-                    $select.forEach(e => {
-                        e.appendChild(optionTag)
-                    })
-                })
-            } catch (error) {
-                console.log(error)
-            }
-        }
-
-        setSelectData(data)
-        setSelectType(dataType)
-
         $newTag.addEventListener('click', async (evt) => {
             evt.preventDefault()
             addSelectTag()
-
-            refreshSelect(data)
         })
 
         $newLi.addEventListener('click', (evt) => {
@@ -251,50 +211,18 @@
         $newStep.addEventListener('click', (evt) => {
             evt.preventDefault()
             addStepLi()
+            fileInputs = Array.from(document.querySelectorAll('input[name="stepImage"]'))
+            fileInputs.forEach(input => {
+                input.addEventListener('change', () => {
+                    updateFileStatus(input)
+                })
+            })
         })
 
         $newCat.addEventListener('click', (evt) => {
             evt.preventDefault()
             addSelectType()
-
-            refreshSelectType(dataType)
         })
-
-
-
-        function refreshSelect(r) {
-            $select = document.querySelectorAll('#recipeTag')
-            $select.forEach((e, i) => {
-                try {
-                    r.map(tag => {
-                        const optionTag = document.createElement('option')
-                        optionTag.setAttribute('value', tag.tag_id)
-                        optionTag.innerText = tag.name
-
-                        $select[i].appendChild(optionTag)
-                    })
-                } catch (error) {
-                    console.log(error)
-                }
-            })
-        }
-
-        function refreshSelectType(r) {
-            $select = document.querySelectorAll('.recipeType')
-            $select.forEach((e, i) => {
-                try {
-                    r.map(tag => {
-                        const optionTag = document.createElement('option')
-                        optionTag.setAttribute('value', tag.categoty_id)
-                        optionTag.innerText = tag.category
-
-                        $select[i].appendChild(optionTag)
-                    })
-                } catch (error) {
-                    console.log(error)
-                }
-            })
-        }
     })
 </script>
 
