@@ -12,10 +12,20 @@ const router = express.Router()
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 
-const storage = multer.memoryStorage();
+const storage = multer.memoryStorage()
 const uploads = multer({
     storage: storage,
     preservePath: true
+})
+
+router.post('/v2/post/sigle-img', uploads.single('image'), async (req, res) => {
+    try {
+        const imageUrl = await uploadSingleImage(req.file)
+        res.json({ imageUrl })
+    } catch (error) {
+        console.error(error)
+        res.status(500).json({ error: 'Error al cargar la imagen' })
+    }
 })
 
 router.get('/test', (req, res) => {
@@ -25,7 +35,7 @@ router.get('/test', (req, res) => {
 router.post('/post/single-img', uploads.array('recipeImage'), async (req, res) => {
     try {
         if (!req.files) {
-            return res.status(400).send('No se ha proporcionado ningún archivo');
+            return res.status(400).send('No se ha proporcionado ningún archivo')
         }
 
         console.log(req.files)
