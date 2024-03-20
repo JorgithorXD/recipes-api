@@ -7,12 +7,12 @@ var imagekit = new ImageKit({
     urlEndpoint: "https://ik.imagekit.io/uv3u01crv"
 })
 
-async function uploadSingleImage(img) {
+async function uploadSingleImage(img, buffer) {
     try {
         return new Promise((resolve, reject) => {
             imagekit.upload(
                 {
-                    file: img.buffer,
+                    file: img.buffer ? img.buffer: buffer,
                     fileName: img.originalname
                 }
             ).then(response => {
@@ -26,6 +26,20 @@ async function uploadSingleImage(img) {
         })
     } catch (error) {
         console.log('Error general al subir la imagen: ' + error)
+    }
+}
+
+async function uploadImageWithoutBuffer(img) {
+    try {
+        if (!img.buffer) {
+            const buffer = Buffer.from(img.base64, 'base64')
+
+            const imageLink = await uploadSingleImage(img, buffer)
+
+            return imageLink
+        }
+    } catch (error) {
+
     }
 }
 
@@ -46,5 +60,6 @@ async function uploadMultipleImages(files) {
 
 export {
     uploadSingleImage,
-    uploadMultipleImages
+    uploadMultipleImages,
+    uploadImageWithoutBuffer
 }

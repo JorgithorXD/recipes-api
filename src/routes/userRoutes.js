@@ -4,7 +4,7 @@ import { dirname, join } from 'path'
 import { register } from '../controllers/authMethods/singUp.js'
 import { checkPassword, getUserData } from '../controllers/authMethods/logIn.js'
 import multer from 'multer'
-import { uploadSingleImage } from '../controllers/postMethods/uploadMethods.js'
+import { uploadSingleImage, uploadImageWithoutBuffer } from '../controllers/postMethods/uploadMethods.js'
 import { getUserDataWithRecipes, getUserFavoriteRecipes, getAllUserData } from '../controllers/getMethods/getUserData.js'
 import { setFavoriteRecipe, updateFavoriteRecipes } from '../controllers/postMethods/uploadUserData.js'
 
@@ -86,8 +86,31 @@ router.post('/register', uploads.single('pfp_img'), async (req, res) => {
         const { user_name, user_last_name, user_username, user_mail, user_password } = req.body
         var pfp
 
-        if (req.file && req.file.length > 0) {
-            pfp = await uploadSingleImage(req.file)
+        if (req.file) {
+            console.log(req.file)
+        } else {
+            pfp = 'https://ik.imagekit.io/uv3u01crv/User_default.webp'
+        }
+
+        const { success, error } = await register(user_mail, user_password, user_name, user_username, user_last_name, pfp)
+
+        if (error) {
+            throw new Error('Hubo un error al crear la cuenta')
+        }
+
+        res.json(success)
+    } catch (error) {
+        console.log(error)
+    }
+})
+
+router.post('/auth/v2/register', uploads.single('pfp_img'), async (req, res) => {
+    try {
+        const { user_name, user_last_name, user_username, user_mail, user_password } = req.body
+        var pfp
+
+        if (req.file) {
+            pfp = await uploadImageWithoutBuffer(req.file)
         } else {
             pfp = 'https://ik.imagekit.io/uv3u01crv/User_default.webp'
         }
@@ -109,8 +132,9 @@ router.post('/view/register', uploads.single('pfp_img'), async (req, res) => {
         const { user_name, user_last_name, user_username, user_mail, user_password } = req.body
         var pfp
 
-        if (req.file && req.file.length > 0) {
-            pfp = await uploadSingleImage(req.file)
+        if (req.file) {
+           pfp = await uploadSingleImage(req.file)
+            console.log(req.file)
         } else {
             pfp = 'https://ik.imagekit.io/uv3u01crv/User_default.webp'
         }
