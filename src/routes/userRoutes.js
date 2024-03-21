@@ -104,18 +104,11 @@ router.post('/register', uploads.single('pfp_img'), async (req, res) => {
     }
 })
 
-router.post('/auth/v2/register', uploads.single('pfp_img'), async (req, res) => {
+router.post('/auth/v2/register', async (req, res) => {
     try {
-        const { user_name, user_last_name, user_username, user_mail, user_password } = req.body
-        var pfp
+        const { user_name, user_last_name, user_username, user_mail, user_password, pfp_img } = req.body
 
-        if (req.file) {
-            pfp = await uploadImageWithoutBuffer(req.file)
-        } else {
-            pfp = 'https://ik.imagekit.io/uv3u01crv/User_default.webp'
-        }
-
-        const { success, error } = await register(user_mail, user_password, user_name, user_username, user_last_name, pfp)
+        const { success, error } = await register(user_mail, user_password, user_name, user_username, user_last_name, pfp_img)
 
         if (error) {
             throw new Error('Hubo un error al crear la cuenta')
