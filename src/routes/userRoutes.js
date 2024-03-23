@@ -104,9 +104,10 @@ router.post('/register', uploads.single('pfp_img'), async (req, res) => {
     }
 })
 
-router.post('/auth/v2/register', async (req, res) => {
+router.post('/auth/v2/register', uploads.any('pfp_img'),async (req, res) => {
     try {
-        const { user_name, user_last_name, user_username, user_mail, user_password, pfp_img } = req.body
+        console.log(req.file)
+        /*const { user_name, user_last_name, user_username, user_mail, user_password} = req.body
 
         if (req.file) {
             pfp = await uploadImageWithoutBuffer(req.file)
@@ -120,7 +121,7 @@ router.post('/auth/v2/register', async (req, res) => {
             throw new Error('Hubo un error al crear la cuenta')
         }
 
-        res.json(success)
+        res.json(success)*/
     } catch (error) {
         console.log(error)
     }

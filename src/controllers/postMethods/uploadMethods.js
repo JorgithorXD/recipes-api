@@ -7,12 +7,12 @@ var imagekit = new ImageKit({
     urlEndpoint: "https://ik.imagekit.io/uv3u01crv"
 })
 
-async function uploadSingleImage(img) {
+async function uploadSingleImage(img, buffer) {
     try {
         return new Promise((resolve, reject) => {
             imagekit.upload(
                 {
-                    file: img.file,
+                    file: img.buffer ? img.buffer: buffer,
                     fileName: img.originalname
                 }
             ).then(response => {
