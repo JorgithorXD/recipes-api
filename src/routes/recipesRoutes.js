@@ -112,32 +112,30 @@ router.get('/basic/get/all', async (req, res) => {
             })
 
             return {
-                recipe: {
-                    id: recipe.recipe_id,
-                    name: recipe.recipe_name,
-                    mainImg: recipe.recipe_img,
-                    tag: {
-                        count: tags.length,
-                        tags: tags.map(tag => {
-                            return {
-                                key: tag.tag_id,
-                                value: tag.name,
-                            }
-                        })
-                    },
-                    category: {
-                        count: types.length,
-                        tags: types.map(type => {
-                            return {
-                                key: type.categoty_id,
-                                value: type.category,
-                            }
-                        })
-                    },
-                    time: {
-                        from: `${recipe.recipe_time[0]} ${timeU[0]}`,
-                        to: `${recipe.recipe_time[1]} ${timeU[1]}`
-                    }
+                id: recipe.recipe_id,
+                name: recipe.recipe_name,
+                mainImg: recipe.recipe_img,
+                tag: {
+                    count: tags.length,
+                    tags: tags.map(tag => {
+                        return {
+                            key: tag.tag_id,
+                            value: tag.name,
+                        }
+                    })
+                },
+                category: {
+                    count: types.length,
+                    tags: types.map(type => {
+                        return {
+                            key: type.categoty_id,
+                            value: type.category,
+                        }
+                    })
+                },
+                time: {
+                    from: `${recipe.recipe_time[0]} ${timeU[0]}`,
+                    to: `${recipe.recipe_time[1]} ${timeU[1]}`
                 }
             }
         })
