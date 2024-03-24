@@ -16,24 +16,19 @@ const __dirname = dirname(__filename)
 const storage = multer.memoryStorage();
 const uploads = multer({ storage: storage });
 
-router.get('/:id/favorites', (req, res) => {
-    const { id } = req.params
-    res.send(`Favoritos del usuario ${id}`)
-})
-
-router.get('/form/register', (req, res) => {
+router.get('/view/form/register', (req, res) => {
     res.sendFile(join(__dirname, '../public/SingIn.html'))
 })
 
-router.get('/form/login', (req, res) => {
+router.get('/view/form/login', (req, res) => {
     if (req.cookies['logged-user-id'] == null || req.cookies['logged-user-id'] == "" || req.cookies['logged-user-id'] == undefined) {
-        res.sendFile(join(__dirname, '../public/logIn.html'))
+        res.render('logIn')
     } else {
         res.sendFile(join(__dirname, '../public/userProfile.html'))
     }
 })
 
-router.post('/view/login', async (req, res) => {
+router.post('/view/auth/login', async (req, res) => {
     try {
         const { emailInput, passwordInput } = req.body
 
@@ -81,13 +76,13 @@ router.post('/auth/login', async (req, res) => {
     }
 })
 
-router.post('/register', uploads.single('pfp_img'), async (req, res) => {
+router.post('/view/auth/register', uploads.single('pfp_img'), async (req, res) => {
     try {
         const { user_name, user_last_name, user_username, user_mail, user_password } = req.body
         var pfp
 
         if (req.file) {
-            console.log(req.file)
+            pfp = await uploadSingleImage(req.file)
         } else {
             pfp = 'https://ik.imagekit.io/uv3u01crv/User_default.webp'
         }
@@ -127,29 +122,6 @@ router.post('/auth/v2/register', uploads.any('pfp_img'),async (req, res) => {
     }
 })
 
-router.post('/view/register', uploads.single('pfp_img'), async (req, res) => {
-    try {
-        const { user_name, user_last_name, user_username, user_mail, user_password } = req.body
-        var pfp
-
-        if (req.file) {
-           pfp = await uploadSingleImage(req.file)
-            console.log(req.file)
-        } else {
-            pfp = 'https://ik.imagekit.io/uv3u01crv/User_default.webp'
-        }
-
-        const { success, error } = await register(user_mail, user_password, user_name, user_username, user_last_name, pfp)
-
-        if (success) {
-            res.redirect('/user/form/login')
-        } else {
-            res.redirect('/user/form/register')
-        }
-    } catch (error) {
-        console.log(error)
-    }
-})
 
 router.get('/get-data/:id', async (req, res) => {
     try {
@@ -188,7 +160,7 @@ router.get('/profile/:id', async (req, res) => {
     }
 })
 
-router.get('/profile/view/:id', async (req, res) => {
+router.get('/view/profile/:id', async (req, res) => {
     try {
         const { id } = req.params
         const data = await getAllUserData(id)

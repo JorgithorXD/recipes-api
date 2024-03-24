@@ -36,13 +36,13 @@ router.post('/all-data', uploads.fields([{ name: 'recipeImage', maxCount: 1 }, {
         recipeTimeUnit = Array.isArray(recipeTimeUnit) ? recipeTimeUnit : [recipeTimeUnit]
         haveFile = Array.isArray(haveFile) ? haveFile : [haveFile]
 
-        const userId = req.cookies['logged-user-id'] ?? 'f659951b-43ba-4704-b662-0edb234bba0c'
+        const userId = req.cookies['logged-user-id'] ?? '66cc5465-8cac-4462-97a0-707a6652e32f'
         console.log(req.files)
 
         const img = await uploadSingleImage(req.files.recipeImage[0])
         var stepImg
 
-        if (req.files.stepImage.length) {
+        if (req.files.stepImage) {
             stepImg = await uploadMultipleImages(req.files.stepImage)
         } else {
             stepImg = []
@@ -50,14 +50,20 @@ router.post('/all-data', uploads.fields([{ name: 'recipeImage', maxCount: 1 }, {
 
         const success = await upload.basicRecipe(userId, recipeName, recipeTag, recipeType, recipeTime, recipeSteps, recipeIngredient, recipeTimeUnit, recipeIngredientUnit, recipeIngredientUnitCount, img, haveFile, stepImg)
 
-        if (success.success === true) {
-            res.redirect('/recipe/form')
+        if (success) {
+            return {
+                status: 'OK',
+                message: 'La receta fue subida'
+            }
         } else {
-            res.send('Algo salio mal')
+            throw new Error('Error al subir la receta.')
         }
 
     } catch (error) {
-        console.log(error)
+        return {
+            status: 'Error',
+            message: error
+        }
     }
 })
 

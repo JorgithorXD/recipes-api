@@ -16,7 +16,9 @@
         <input type="password" name="passwordInput" placeholder="Introduce tu contraseña">
 
         <input type="submit" value="Iniciar sesion">
+        <a href="/">Volver al inicio</a>
     </form>
+
 </body>
 
 </html>
@@ -25,7 +27,9 @@
     body {
         width: 100dvw;
         height: 100dvh;
-
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
     html {
@@ -53,7 +57,7 @@
     }
 
     input[type="submit"] {
-        margin: 2rem auto;
+        margin: 2rem auto 0 auto;
         font-size: 1.3rem;
         padding: 0.5rem 0;
         border-radius: 8px;
@@ -64,10 +68,21 @@
         flex-direction: column;
 
         width: 96%;
-        margin: 50% auto;
         background: #ccc;
         border-radius: 4px;
         padding: 0.5rem;
+    }
+
+    a {
+        padding: 0.5rem 0;
+        background: #222222;
+        text-align: center;
+        border-radius: 8px;
+        color: white;
+        text-decoration: none;
+        font-size: 1.3rem;
+        width: 85%;
+        margin: 1rem auto 1rem auto;
     }
 
     label {
