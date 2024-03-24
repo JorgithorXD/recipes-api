@@ -127,21 +127,22 @@
             const formData = new FormData(form);
 
             try {
-                const response = await fetch('https://recipes-api-dev.koyeb.app/recipe/all-data', {
+                const response = await fetch('/recipe/all-data', {
                     method: 'POST',
                     body: formData
-                });
+                })
 
-                const data = await response.json();
+                const data = await response.json()
 
-                if (response.ok) {
-                    alert('¡Receta subida con éxito!');
+                if (data.status == 'error') {
+                    throw new Error(data.message)
                 } else {
-                    alert('Error al subir la receta. Por favor, inténtalo de nuevo.');
+                    alert(data.message)
+                    window.location = '/recipe/form'
                 }
             } catch (error) {
                 console.error('Error:', error);
-                alert('Error al subir la receta. Por favor, inténtalo de nuevo.')
+                alert(error)
             }
         })
 

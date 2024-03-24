@@ -51,19 +51,18 @@ router.post('/all-data', uploads.fields([{ name: 'recipeImage', maxCount: 1 }, {
         const success = await upload.basicRecipe(userId, recipeName, recipeTag, recipeType, recipeTime, recipeSteps, recipeIngredient, recipeTimeUnit, recipeIngredientUnit, recipeIngredientUnitCount, img, haveFile, stepImg)
 
         if (success) {
-            return {
+            res.json({
                 status: 'OK',
                 message: 'La receta fue subida'
-            }
+            })
         } else {
-            throw new Error('Error al subir la receta.')
+            throw new Error('Error al subir la receta.');
         }
-
     } catch (error) {
-        return {
+        res.status(500).json({
             status: 'Error',
-            message: error
-        }
+            message: error.message
+        })
     }
 })
 
