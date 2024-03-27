@@ -13,39 +13,12 @@ const router = express.Router()
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 
-const storage = multer.memoryStorage();
-const uploads = multer({ storage: storage });
+const storage = multer.memoryStorage()
+const uploads = multer({ storage: storage })
 
-router.get('/view/form/register', (req, res) => {
-    res.sendFile(join(__dirname, '../public/SingIn.html'))
-})
+// Endpoints de la APIRest 
 
-router.get('/view/form/login', (req, res) => {
-    if (req.cookies['logged-user-id'] == null || req.cookies['logged-user-id'] == "" || req.cookies['logged-user-id'] == undefined) {
-        res.render('logIn')
-    } else {
-        res.sendFile(join(__dirname, '../public/userProfile.html'))
-    }
-})
-
-router.post('/view/auth/login', async (req, res) => {
-    try {
-        const { emailInput, passwordInput } = req.body
-
-        const { success, id } = await checkPassword(emailInput, passwordInput)
-
-        if (success == true) {
-            res.cookie('logged-user-id', id, { httpOnly: true })
-            res.redirect('/')
-        } else {
-            res.send('<h1>Correo o contraseña incorrectos</h1>')
-        }
-    } catch (error) {
-        console.log(error)
-    }
-})
-
-router.post('/auth/login', async (req, res) => {
+router.post('/auth/v1/login', async (req, res) => {
     try {
         const { emailInput, passwordInput } = req.body
 
@@ -76,32 +49,23 @@ router.post('/auth/login', async (req, res) => {
     }
 })
 
-router.post('/view/auth/register', uploads.single('pfp_img'), async (req, res) => {
-    try {
-        const { user_name, user_last_name, user_username, user_mail, user_password } = req.body
-        var pfp
 
-        if (req.file) {
-            pfp = await uploadSingleImage(req.file)
-        } else {
-            pfp = 'https://ik.imagekit.io/uv3u01crv/User_default.webp'
+router.post('/auth/v2/register', uploads.single('pfp'), async (req, res) => {
+    try {
+        const archivos = req.files
+
+        if (!archivos) {
+            return res.status(400).send('No se ha subido ningún archivo.')
         }
 
-        const { success, error } = await register(user_mail, user_password, user_name, user_username, user_last_name, pfp)
+        archivos.forEach(archivo => {
+            console.log('Nombre del archivo:', archivo.originalname)
+            console.log('Tipo de archivo:', archivo.mimetype)
+            console.log('Tamaño del archivo:', archivo.size)
+            console.log('Buffer de archivo:', archivo.buffer)
+        })
 
-        if (error) {
-            throw new Error('Hubo un error al crear la cuenta')
-        }
-
-        res.json(success)
-    } catch (error) {
-        console.log(error)
-    }
-})
-
-router.post('/auth/v2/register', uploads.any('pfp_img'),async (req, res) => {
-    try {
-        console.log(req.file)
+        res.status(200).send('Archivos recibidos correctamente.')
         /*const { user_name, user_last_name, user_username, user_mail, user_password} = req.body
 
         if (req.file) {
@@ -122,6 +86,29 @@ router.post('/auth/v2/register', uploads.any('pfp_img'),async (req, res) => {
     }
 })
 
+router.post('/set/favorite/:user_id/favorite/:recipe_id', async (req, res) => {
+    try {
+        const { user_id, recipe_id } = req.params
+
+        var favoriteArray = await updateFavoriteRecipes(user_id)
+
+        if (favoriteArray.includes(recipe_id)) {
+            res.json({
+                data: 'La receta ya esta agregada',
+            })
+        } else {
+            favoriteArray.push(recipe_id)
+
+            const { data } = await setFavoriteRecipe(user_id, favoriteArray)
+            console.log(data)
+            res.json({
+                data: 'Receta añadida a favoritos'
+            })
+        }
+    } catch (error) {
+
+    }
+})
 
 router.get('/get-data/:id', async (req, res) => {
     try {
@@ -160,6 +147,77 @@ router.get('/profile/:id', async (req, res) => {
     }
 })
 
+// Endpoints de la pagina
+
+router.get('/view/test/form', (req, res) => {
+    res.sendFile(join(__dirname, '../public/test.html'))
+})
+
+router.post('/api/test', uploads.any() ,async (req, res) => {
+    try {
+        res.json(
+            {
+                'reqFile': req.file,
+                'reqFiles': req.files
+            }
+        )
+    } catch (error) {
+        res.json(error)
+    }
+})
+
+router.get('/view/form/register', (req, res) => {
+    res.sendFile(join(__dirname, '../public/SingIn.html'))
+})
+
+router.get('/view/form/login', (req, res) => {
+    if (req.cookies['logged-user-id'] == null || req.cookies['logged-user-id'] == "" || req.cookies['logged-user-id'] == undefined) {
+        res.render('logIn')
+    } else {
+        res.sendFile(join(__dirname, '../public/userProfile.html'))
+    }
+})
+
+router.post('/view/auth/register', uploads.single('pfp_img'), async (req, res) => {
+    try {
+        const { user_name, user_last_name, user_username, user_mail, user_password } = req.body
+        var pfp
+
+        if (req.file) {
+            pfp = await uploadSingleImage(req.file)
+        } else {
+            pfp = 'https://ik.imagekit.io/uv3u01crv/User_default.webp'
+        }
+
+        const { success, error } = await register(user_mail, user_password, user_name, user_username, user_last_name, pfp)
+
+        if (error) {
+            throw new Error('Hubo un error al crear la cuenta')
+        }
+
+        res.json(success)
+    } catch (error) {
+        console.log(error)
+    }
+})
+
+router.post('/view/auth/login', async (req, res) => {
+    try {
+        const { emailInput, passwordInput } = req.body
+
+        const { success, id } = await checkPassword(emailInput, passwordInput)
+
+        if (success == true) {
+            res.cookie('logged-user-id', id, { httpOnly: true })
+            res.redirect('/')
+        } else {
+            res.send('<h1>Correo o contraseña incorrectos</h1>')
+        }
+    } catch (error) {
+        console.log(error)
+    }
+})
+
 router.get('/view/profile/:id', async (req, res) => {
     try {
         const { id } = req.params
@@ -180,28 +238,5 @@ router.post('/profile/close', async (req, res) => {
     }
 })
 
-router.post('/set/:user_id/favorite/:recipe_id', async (req, res) => {
-    try {
-        const { user_id, recipe_id } = req.params
-
-        var favoriteArray = await updateFavoriteRecipes(user_id)
-
-        if (favoriteArray.includes(recipe_id)) {
-            res.json({
-                data: 'La receta ya esta agregada',
-            })
-        } else {
-            favoriteArray.push(recipe_id)
-
-            const { data } = await setFavoriteRecipe(user_id, favoriteArray)
-            console.log(data)
-            res.json({
-                data: 'Receta añadida a favoritos'
-            })
-        }
-    } catch (error) {
-
-    }
-})
 
 export default router
