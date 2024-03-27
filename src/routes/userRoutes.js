@@ -156,6 +156,8 @@ router.get('/view/test/form', (req, res) => {
 router.post('/api/test', async (req, res) => {
     try {
         const { img } = req.body
+        
+        console.log(img)
         const buffer = Buffer.from(img.base64, 'base64')
 
         res.json(
@@ -165,6 +167,7 @@ router.post('/api/test', async (req, res) => {
             }
         )
     } catch (error) {
+        console.log(error)
         res.json(error)
     }
 })
