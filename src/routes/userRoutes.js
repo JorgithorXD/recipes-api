@@ -50,39 +50,38 @@ router.post('/auth/v1/login', async (req, res) => {
 })
 
 
-router.post('/auth/v2/register', uploads.single('pfp'), async (req, res) => {
+router.post('/auth/v2/register', async (req, res) => {
     try {
-        const archivos = req.files
+        const { img, username, name, lastname, email, password } = req.body
+        var url
 
-        if (!archivos) {
-            return res.status(400).send('No se ha subido ningún archivo.')
-        }
-
-        archivos.forEach(archivo => {
-            console.log('Nombre del archivo:', archivo.originalname)
-            console.log('Tipo de archivo:', archivo.mimetype)
-            console.log('Tamaño del archivo:', archivo.size)
-            console.log('Buffer de archivo:', archivo.buffer)
-        })
-
-        res.status(200).send('Archivos recibidos correctamente.')
-        /*const { user_name, user_last_name, user_username, user_mail, user_password} = req.body
-
-        if (req.file) {
-            pfp = await uploadImageWithoutBuffer(req.file)
+        if (img || img == {} || img === "" || img.length < 0) {
+            url = 'https://ik.imagekit.io/uv3u01crv/User_default.webp'
         } else {
-            pfp = 'https://ik.imagekit.io/uv3u01crv/User_default.webp'
+            const buffer = Buffer.from(img.base64, 'base64')
+            url = await uploadImageWithoutBuffer(buffer, img.fileName)
         }
 
-        const { success, error } = await register(user_mail, user_password, user_name, user_username, user_last_name, pfp)
+        const { data, error, message, status, errorMessage } = await register(email, password, name, username, lastname, url)
 
-        if (error) {
-            throw new Error('Hubo un error al crear la cuenta')
+        if (error || status == 'Error') {
+            throw new Error('Ocurrio un error: ' + error + "\n Mensaje: " + errorMessage)
         }
 
-        res.json(success)*/
+        res.json(
+            {
+                id: data[0].user_id,
+                status: status,
+                message: message,
+                error: false,
+                errorMessage: null
+            }
+        )
     } catch (error) {
-        console.log(error)
+        res.json({
+            id: null,
+            error: error,
+        })
     }
 })
 
