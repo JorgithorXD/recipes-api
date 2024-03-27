@@ -153,12 +153,15 @@ router.get('/view/test/form', (req, res) => {
     res.sendFile(join(__dirname, '../public/test.html'))
 })
 
-router.post('/api/test', uploads.any() ,async (req, res) => {
+router.post('/api/test', async (req, res) => {
     try {
+        const { img } = req.body
+        const buffer = Buffer.from(img.base64, 'base64')
+
         res.json(
             {
-                'reqFile': req.file,
-                'reqFiles': req.files
+                name: img.originalname,
+                buffer: buffer
             }
         )
     } catch (error) {
