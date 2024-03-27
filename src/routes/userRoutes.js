@@ -159,10 +159,13 @@ router.post('/api/test', async (req, res) => {
 
         const buffer = Buffer.from(img.base64, 'base64')
 
+        const url = await uploadImageWithoutBuffer(buffer, img.fileName)
+
         res.json(
             {
                 name: img.fileName,
-                buffer: buffer
+                buffer: buffer,
+                url: url
             }
         )
     } catch (error) {

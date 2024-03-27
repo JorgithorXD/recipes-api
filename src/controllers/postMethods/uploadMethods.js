@@ -29,17 +29,25 @@ async function uploadSingleImage(img) {
     }
 }
 
-async function uploadImageWithoutBuffer(img) {
+async function uploadImageWithoutBuffer(buffer, fileName) {
     try {
-        if (!img.buffer) {
-            const buffer = Buffer.from(img.base64, 'base64')
+        return new Promise((resolve, reject) => {
+            imagekit.upload(
+                {
+                    file: buffer,
+                    fileName: fileName
+                }
+            ).then(response => {
+                console.log(response.url)
+                resolve(response.url)
+            }).catch(error => {
+                console.log(error)
+                reject(error)
+            })
 
-            const imageLink = await uploadSingleImage(img, buffer)
-
-            return imageLink
-        }
+        })
     } catch (error) {
-
+        console.log('Error general al subir la imagen: ' + error)
     }
 }
 
