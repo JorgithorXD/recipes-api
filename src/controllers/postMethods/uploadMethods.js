@@ -4,7 +4,7 @@ import ImageKit from 'imagekit'
 var imagekit = new ImageKit({
     privateKey: "private_AOgu21GUBXcCpjYFgbnmJi8DwR8=",
     publicKey: "public_n9XP7e+6IRMZYTJIgJXFtXVtwKM=",
-    urlEndpoint: "https://ik.imagekit.io/uv3u01crv/tr:crop"
+    urlEndpoint: "https://ik.imagekit.io/uv3u01crv"
 })
 
 async function uploadSingleImage(img) {
