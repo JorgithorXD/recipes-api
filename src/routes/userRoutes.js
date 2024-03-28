@@ -55,7 +55,7 @@ router.post('/auth/v2/register', async (req, res) => {
         const { img, username, name, lastname, email, password } = req.body
         var url
 
-        if (img || img == {} || img === "" || img.length < 0) {
+        if (!img || !img.base64 || img.base64 === "" || img.base64.length < 1) {
             url = 'https://ik.imagekit.io/uv3u01crv/User_default.webp'
         } else {
             const buffer = Buffer.from(img.base64, 'base64')
