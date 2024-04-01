@@ -85,7 +85,7 @@ router.post('/auth/v2/register', async (req, res) => {
     }
 })
 
-router.post('/set/favorite/:user_id/favorite/:recipe_id', async (req, res) => {
+router.post('/api/favorite/add/:user_id/recipe/:recipe_id', async (req, res) => {
     try {
         const { user_id, recipe_id } = req.params
 
@@ -93,7 +93,8 @@ router.post('/set/favorite/:user_id/favorite/:recipe_id', async (req, res) => {
 
         if (favoriteArray.includes(recipe_id)) {
             res.json({
-                data: 'La receta ya esta agregada',
+                message: 'La receta ya esta agregada',
+                status: 'Fail',
             })
         } else {
             favoriteArray.push(recipe_id)
@@ -101,11 +102,15 @@ router.post('/set/favorite/:user_id/favorite/:recipe_id', async (req, res) => {
             const { data } = await setFavoriteRecipe(user_id, favoriteArray)
             console.log(data)
             res.json({
-                data: 'Receta añadida a favoritos'
+                message: 'Receta agregada a favoritos',
+                status: 'Success',
             })
         }
     } catch (error) {
-
+        res.json({
+            message: error,
+            status: 'Error',
+        })
     }
 })
 
