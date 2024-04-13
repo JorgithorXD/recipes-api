@@ -161,10 +161,6 @@ router.get('/form', async (req, res) => {
         const tagData = await getFoodData.foodTags()
         const unitData = await getFoodData.foodUnits()
 
-        console.log(typeData)
-        console.log(tagData)
-        console.log(unitData)
-
         res.render('recipeForm', { typeData, tagData, unitData })
     } catch (error) {
 
