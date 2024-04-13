@@ -97,8 +97,6 @@
                         <label for="recipeSteps">Paso</label>
                         <textarea name="recipeSteps" id="recipeSteps" cols="30" rows="10"
                             placeholder="El paso de como hacerlo aqui"></textarea>
-                        <input type="file" name="stepImage">
-                        <input type="hidden" name="haveFile" value="false" class="imageStatus">
                     </div>
                 </li>
             </ul>
@@ -127,7 +125,7 @@
             const formData = new FormData(form);
 
             try {
-                const response = await fetch('/recipe/all-data', {
+                const response = await fetch('/api/v1/recipe/all-data', {
                     method: 'POST',
                     body: formData
                 })
@@ -138,29 +136,12 @@
                     throw new Error(data.message)
                 } else {
                     alert(data.message)
-                    window.location = '/recipe/form'
+                    window.location = '/api/v1/recipe/form'
                 }
             } catch (error) {
                 console.error('Error:', error);
                 alert(error)
             }
-        })
-
-        function updateFileStatus(input) {
-            const fileStatusInput = input.parentNode.querySelector('.imageStatus');
-            if (input.files.length > 0) {
-                fileStatusInput.value = 'true'
-            } else {
-                fileStatusInput.value = 'false'
-            }
-        }
-
-        var fileInputs = Array.from(document.querySelectorAll('input[name="stepImage"]'))
-
-        fileInputs.forEach(input => {
-            input.addEventListener('change', () => {
-                updateFileStatus(input)
-            })
         })
 
         function addIngredientLi() {
@@ -188,8 +169,6 @@
             li.innerHTML = `<div class="steps">
                         <label for="recipeSteps">Paso</label>
                         <textarea name="recipeSteps" id="recipeSteps" cols="30" rows="10" placeholder="El paso de como hacerlo aqui"></textarea>
-                        <input type="file" name="stepImage">
-                        <input type="hidden" name="haveFile" value="false" class = "imageStatus">
                     </div>`
 
             document.querySelector('.steps-list').appendChild(li)

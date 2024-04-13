@@ -4,12 +4,12 @@
             <a class="header" href="/">Volver al inicio</a>
         <%}%>
         <% if(userId === undefined && page != 'profile') {%>
-            <a class="header" href="/user/view/form/login">Iniciar sesion</a>
-            <a class="header" href="/user/view/form/register">Registrarse</a>
+            <a class="header" href="/api/v1/user/view/form/login">Iniciar sesion</a>
+            <a class="header" href="/api/v1/user/view/form/register">Registrarse</a>
         <%}  if (userId != undefined && page != 'profile') {%>
-            <a class="profile header" href="/user/view/profile/<%= userId %>">Perfil</a>
+            <a class="profile header" href="/api/v1/user/view/profile/<%= userId %>">Perfil</a>
         <%}  if (page === 'profile' && userId != undefined) {%>
-            <form action="/user/profile/close" method="post">
+            <form action="/api/v1/user/profile/close" method="post">
                 <input type="submit" class="profile-close header" value="Cerrar sesion">
             </form>
         <%}%>

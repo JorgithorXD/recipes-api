@@ -32,10 +32,10 @@ app.get('/', (req, res) => {
     res.render('index', { userId: req.cookies['logged-user-id'], page: 'index' })
 })
 
-app.use('/recipe', recipesRoutes)
-app.use('/src', srcRoutes)
-app.use('/user', userRoutes)
-app.use('/food', foodRoutes)
+app.use('/api/v1/recipe', recipesRoutes)
+app.use('/api/v1/src', srcRoutes)
+app.use('/api/v1/user', userRoutes)
+app.use('/api/v1/food', foodRoutes)
 
 app.listen(PORT, () => {
     console.log('server listening on https://localhost:' + PORT)

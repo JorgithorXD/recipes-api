@@ -20,11 +20,9 @@ const uploads = multer({
     preservePath: true
 })
 
-router.post('/all-data', uploads.fields([{ name: 'recipeImage', maxCount: 1 }, { name: 'stepImage' }]), async (req, res) => {
+router.post('/all-data', uploads.fields([{ name: 'recipeImage', maxCount: 1 }]), async (req, res) => {
     try {
-        var { recipeName, recipeType, recipeTag, recipeTime, recipeTimeUnit, recipeIngredient, recipeIngredientUnit, recipeIngredientUnitCount, recipeSteps, haveFile } = req.body
-
-        console.log(haveFile)
+        var { recipeName, recipeType, recipeTag, recipeTime, recipeTimeUnit, recipeIngredient, recipeIngredientUnit, recipeIngredientUnitCount, recipeSteps} = req.body
 
         recipeIngredient = Array.isArray(recipeIngredient) ? recipeIngredient : [recipeIngredient]
         recipeIngredientUnitCount = Array.isArray(recipeIngredientUnitCount) ? recipeIngredientUnitCount : [recipeIngredientUnitCount]
@@ -34,21 +32,12 @@ router.post('/all-data', uploads.fields([{ name: 'recipeImage', maxCount: 1 }, {
         recipeTime = Array.isArray(recipeTime) ? recipeTime : [recipeTime]
         recipeSteps = Array.isArray(recipeSteps) ? recipeSteps : [recipeSteps]
         recipeTimeUnit = Array.isArray(recipeTimeUnit) ? recipeTimeUnit : [recipeTimeUnit]
-        haveFile = Array.isArray(haveFile) ? haveFile : [haveFile]
 
         const userId = req.cookies['logged-user-id'] ?? '66cc5465-8cac-4462-97a0-707a6652e32f'
-        console.log(req.files)
 
         const img = await uploadSingleImage(req.files.recipeImage[0])
-        var stepImg
-
-        if (req.files.stepImage) {
-            stepImg = await uploadMultipleImages(req.files.stepImage)
-        } else {
-            stepImg = []
-        }
-
-        const success = await upload.basicRecipe(userId, recipeName, recipeTag, recipeType, recipeTime, recipeSteps, recipeIngredient, recipeTimeUnit, recipeIngredientUnit, recipeIngredientUnitCount, img, haveFile, stepImg)
+    
+        const success = await upload.basicRecipe(userId, recipeName, recipeTag, recipeType, recipeTime, recipeSteps, recipeIngredient, recipeTimeUnit, recipeIngredientUnit, recipeIngredientUnitCount, img)
 
         if (success) {
             res.json({
@@ -97,7 +86,7 @@ router.get('/all', async (req, res) => {
     }
 })
 
-router.get('/basic/get/all', async (req, res) => {
+router.get('/get/all/basic', async (req, res) => {
     try {
         const recipeData = await getBasicRecipeInformation()
         const typeData = await getFoodData.foodTypes()

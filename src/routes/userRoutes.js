@@ -18,7 +18,7 @@ const uploads = multer({ storage: storage })
 
 // Endpoints de la APIRest 
 
-router.post('/auth/v1/login', async (req, res) => {
+router.post('/auth/login', async (req, res) => {
     try {
         const { emailInput, passwordInput } = req.body
 
@@ -50,7 +50,7 @@ router.post('/auth/v1/login', async (req, res) => {
 })
 
 
-router.post('/auth/v2/register', async (req, res) => {
+router.post('/auth/register', async (req, res) => {
     try {
         const { img, username, name, lastname, email, password } = req.body
         var url
@@ -85,7 +85,7 @@ router.post('/auth/v2/register', async (req, res) => {
     }
 })
 
-router.post('/api/favorite/add/:user_id/recipe/:recipe_id', async (req, res) => {
+router.post('/add/favorite/:user_id/recipe/:recipe_id', async (req, res) => {
     try {
         const { user_id, recipe_id } = req.params
 
@@ -200,13 +200,16 @@ router.post('/view/auth/register', uploads.single('pfp_img'), async (req, res) =
             pfp = 'https://ik.imagekit.io/uv3u01crv/User_default.webp'
         }
 
-        const { success, error } = await register(user_mail, user_password, user_name, user_username, user_last_name, pfp)
+        const { error, errorMessage, message, status, data } = await register(user_mail, user_password, user_name, user_username, user_last_name, pfp)
 
         if (error) {
-            throw new Error('Hubo un error al crear la cuenta')
+            throw new Error(message + errorMessage)
         }
 
-        res.json(success)
+        if (status == 'Success') {
+            res.cookie('logged-user-id', data, { httpOnly: true })
+            res.redirect('/')
+        }
     } catch (error) {
         console.log(error)
     }

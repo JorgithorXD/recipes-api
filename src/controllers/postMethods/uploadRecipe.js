@@ -1,6 +1,6 @@
 import { supabase } from '../../services/supabase.js'
 
-async function basicRecipe(user_id, recipe_name, recipe_tag, recipe_type, recipe_time, recipe_steps, recipe_ingredients, recipe_time_unit, recipe_ingredient_amount, recipe_ingredient_unit, img, haveImage, stepImage) {
+async function basicRecipe(user_id, recipe_name, recipe_tag, recipe_type, recipe_time, recipe_steps, recipe_ingredients, recipe_time_unit, recipe_ingredient_amount, recipe_ingredient_unit, img) {
     try {
         const { data, error } = await supabase
             .from('recipes_basic')
@@ -16,9 +16,6 @@ async function basicRecipe(user_id, recipe_name, recipe_tag, recipe_type, recipe
                 recipe_ingredient_amount: recipe_ingredient_amount, 
                 recipe_ingredient_unit: recipe_ingredient_unit,
                 recipe_img: img,
-                step_img: stepImage,
-                step_with_image: haveImage
-
             }]).select('recipe_id')
 
         if (error) {

@@ -33,7 +33,7 @@
                 <ul>
                     <% userData.recipes.forEach((recipe, index)=> { %>
                         <li>
-                            <a href="/recipe/view/<%= recipe.recipe_id %>">
+                            <a href="/api/v1/recipe/view/<%= recipe.recipe_id %>">
                                 <img src="<%= recipe.recipe_img[0] %>" class="recipe"
                                     alt="Imagen de la receta <%= recipe.recipe_id %>">
                                 <span class="recipe-h1"><%= recipe.recipe_name %></span>
