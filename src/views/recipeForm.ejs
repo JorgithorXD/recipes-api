@@ -120,27 +120,49 @@
 
         form.addEventListener('submit', async (event) => {
             event.preventDefault()
-            console.log('oasdasd')
 
-            const formData = new FormData(form);
+            const formData = new FormData(form)
 
-            try {
-                const response = await fetch('/api/v1/recipe/all-data', {
-                    method: 'POST',
-                    body: formData
-                })
+            const inputs = form.querySelectorAll('input[type="text"], input[type="number"], select, textarea')
+            let isEmpty = false
 
-                const data = await response.json()
-
-                if (data.status == 'error') {
-                    throw new Error(data.message)
-                } else {
-                    alert(data.message)
-                    window.location = '/api/v1/recipe/form'
+            inputs.forEach(input => {
+                if ((!input.value.trim() && input.tagName !== 'SELECT') ||
+                    (input.tagName === 'SELECT' && input.selectedIndex === 0)) {
+                    isEmpty = true;
+                    input.classList.add('empty-field');
                 }
-            } catch (error) {
-                console.error('Error:', error);
-                alert(error)
+
+                input.addEventListener(input.tagName === 'SELECT' || input.tagName === 'TEXTAREA' ? 'change' : 'input', () => {
+                    if ((input.value.trim() && input.tagName !== 'SELECT') ||
+                        (input.tagName === 'SELECT' && input.selectedIndex !== 0) ||
+                        input.tagName === 'TEXTAREA') {
+                        input.classList.remove('empty-field');
+                    }
+                });
+            });
+
+            if (isEmpty) {
+                alert('Por favor completa todos los campos antes de enviar el formulario.');
+            } else {
+                try {
+                    const response = await fetch('/api/v1/recipe/all-data', {
+                        method: 'POST',
+                        body: formData
+                    })
+
+                    const data = await response.json()
+
+                    if (data.status == 'error') {
+                        throw new Error(data.message)
+                    } else {
+                        alert(data.message)
+                        window.location = '/api/v1/recipe/form'
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert(error)
+                }
             }
         })
 
@@ -374,6 +396,24 @@
             left: 0.25rem;
             font-weight: bold;
         }
+    }
+
+    .empty-field {
+        border-color: red;
+        border-width: 2;
+        border-style: solid;
+    }
+
+    textarea.empty-field,
+    textarea.empty-field:active,
+    textarea.empty-field:focus {
+        outline: 2px red solid;
+    }
+
+    textaera,
+    textarea:active,
+    textarea:focus {
+        outline: none;
     }
 </style>
 
