@@ -16,6 +16,10 @@
 
             <label for="recipeImage">Foto de la receta</label>
             <input type="file" name="recipeImage" id="recipeImage" accept="image/*">
+
+            <label for="recipeDescription">Descripcion de la receta</label>
+            <textarea name="recipeDescription" class="desc" cols="30" rows="10"
+                placeholder="Description de la receta"></textarea>
             <h3>Etiquetas</h3>
             <ul class="tags">
                 <input type="button" class="new-tag-button" value="Agregar otra etiqueta">
@@ -414,6 +418,11 @@
     textarea:active,
     textarea:focus {
         outline: none;
+    }
+
+    .desc {
+        margin-top: 4px;
+        margin-bottom: 10px;
     }
 </style>
 
