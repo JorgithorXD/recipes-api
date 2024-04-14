@@ -98,20 +98,20 @@ router.post('/add/score/:score/:user_id/recipe/:recipe_id', async (req, res) => 
 
         if (data.error) throw new Error(data.errorMessage)
 
-        return {
+        res.json({
             status: 'Fail',
             data: data.data,
             error: false,
             errorMessage: null
-        }
+        })
 
     } catch (error) {
-        return {
+        res.json({
             status: 'Fail',
             data: null,
             error: true,
             errorMessage: error.message
-        }
+        })
     }
 })
 
