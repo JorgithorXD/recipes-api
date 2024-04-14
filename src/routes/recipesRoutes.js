@@ -112,6 +112,7 @@ router.get('/get/all', async (req, res) => {
                 id: recipe.recipe_id,
                 owner: recipe.user_id,
                 name: recipe.recipe_name,
+                description: recipe.recipe_description,
                 mainImg: recipe.recipe_img,
                 addedAt: recipe.created_at,
                 tag: {
