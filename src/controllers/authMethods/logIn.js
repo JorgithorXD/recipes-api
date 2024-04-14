@@ -73,11 +73,12 @@ async function getPrivateInfo(id) {
     }
 }
 
+
 async function checkPassword(email, userPassword) {
     try {
         const { id, error: idError } = await getUserId(email)
         const { password, error: passwordError } = await getPrivateInfo(id)
-        
+
         if (idError && passwordError) {
             throw new Error('La cuenta no existe')
         }
@@ -107,5 +108,5 @@ async function checkPassword(email, userPassword) {
 
 export {
     checkPassword,
-    getUserData
+    getUserData,
 }

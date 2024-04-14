@@ -89,6 +89,8 @@ router.post('/add/favorite/:user_id/recipe/:recipe_id', async (req, res) => {
     try {
         const { user_id, recipe_id } = req.params
 
+        if (!user_id || user_id == "" || user_id == null || user_id == undefined || user_id == NaN) throw new Error('Para realizar esta accion necesitas iniciar sesion')
+
         var favoriteArray = await updateFavoriteRecipes(user_id)
 
         if (favoriteArray.includes(recipe_id)) {
@@ -100,7 +102,7 @@ router.post('/add/favorite/:user_id/recipe/:recipe_id', async (req, res) => {
             favoriteArray.push(recipe_id)
 
             const { data } = await setFavoriteRecipe(user_id, favoriteArray)
-            console.log(data)
+
             res.json({
                 message: 'Receta agregada a favoritos',
                 status: 'Success',

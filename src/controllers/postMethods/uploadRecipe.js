@@ -30,6 +30,36 @@ async function basicRecipe(user_id, recipe_name, recipe_tag, recipe_type, recipe
     }
 }
 
+async function calicateRecipe(score, user_id, recipe_id) {
+    try {
+        const { data, error } = supabase
+            .from('recipes_basic_score')
+            .insert(
+                {
+                    recipe_id,
+                    user_id,
+                    score
+                }
+            )
+
+        if (error) throw new Error(error.message)
+
+        return {
+            data: 'Receta calificada',
+            error: false,
+            errorMessage: null
+        }
+
+    } catch (error) {
+        return {
+            data: 'La receta no se pudo calificar',
+            error: true,
+            errorMessage: error.message
+        }
+    }
+}
+
 export const upload = {
-    basicRecipe
+    basicRecipe,
+    calicateRecipe
 }

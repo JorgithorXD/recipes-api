@@ -63,8 +63,22 @@ async function getAllUserData(id) {
     }
 }
 
+async function getUserById(id) {
+    try {
+        const { data, error: userError } = await getUserData(id)
+
+        if (userError) {
+            throw new Error('Error al obtener datos del usuario: ' + userError.message)
+        }
+
+        return data[0].user_username
+    } catch (error) {
+
+    }
+}
+
 export {
-    getUserDataWithRecipes,
-    getUserFavoriteRecipes,
-    getAllUserData
+    getAllUserData,
+    getUserById, getUserDataWithRecipes,
+    getUserFavoriteRecipes
 }

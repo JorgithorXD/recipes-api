@@ -1,14 +1,12 @@
 import express from 'express'
-import { upload } from '../controllers/postMethods/uploadRecipe.js'
-import { getAllRecipes, getBasicRecipeInformation, getRecipeByRecipeId } from '../controllers/getMethods/getRecipes.js'
-import { fileURLToPath } from 'url'
-import { dirname, join } from 'path'
 import multer from 'multer'
-import { uploadSingleImage, uploadMultipleImages } from '../controllers/postMethods/uploadMethods.js'
-import { isLogged } from '../controllers/middelwares.js'
-import fs from 'fs/promises'
-import { getUserFavoriteRecipes } from '../controllers/getMethods/getUserData.js'
+import { dirname, join } from 'path'
+import { fileURLToPath } from 'url'
 import { getFoodData } from '../controllers/getMethods/getFoodData.js'
+import { getAllRecipes, getBasicRecipeInformation, getRecipeByRecipeId } from '../controllers/getMethods/getRecipes.js'
+import { getUserById } from '../controllers/getMethods/getUserData.js'
+import { uploadSingleImage } from '../controllers/postMethods/uploadMethods.js'
+import { upload } from '../controllers/postMethods/uploadRecipe.js'
 
 const router = express.Router()
 const __filename = fileURLToPath(import.meta.url)
@@ -86,6 +84,37 @@ router.get('/all', async (req, res) => {
     }
 })
 
+router.post('/add/score/:score/:user_id/recipe/:recipe_id', async (req, res) => {
+    try {
+        const { score, user_id, recipe_id } = req.params
+
+        if (score == 0) throw new Error('El minimo de calificacion es 1')
+        if (score == undefined || score == null) throw new Error('Introduce una calificacion valida')
+
+        if (user_id == "" || user_id == null || user_id == undefined) throw new Error('Para realizar esta accion debes iniciar sesion')
+        if (recipe_id == "" || recipe_id == null || recipe_id == undefined) throw new Error('Debes calificar una receta valida')
+
+        const data = await upload.calicateRecipe(score, user_id, recipe_id)
+
+        if (data.error) throw new Error(data.errorMessage)
+
+        return {
+            status: 'Fail',
+            data: data.data,
+            error: false,
+            errorMessage: null
+        }
+
+    } catch (error) {
+        return {
+            status: 'Fail',
+            data: null,
+            error: true,
+            errorMessage: error.message
+        }
+    }
+})
+
 router.get('/get/all', async (req, res) => {
     try {
         const recipeData = await getAllRecipes()
@@ -93,24 +122,26 @@ router.get('/get/all', async (req, res) => {
         const tagData = await getFoodData.foodTags()
         const unitsData = await getFoodData.foodUnits()
 
-        const recipe = recipeData.map(recipe => {
-            const tags = tagData.filter(tag => recipe.recipe_tag.some(tagId => tag.tag_id === tagId))
-            const types = typeData.filter(type => recipe.recipe_type.some(tagId => type.categoty_id === tagId))
+        const recipes = await Promise.all(recipeData.map(async (recipe) => {
+            const ownerName = await getUserById(recipe.user_id)
+            const tags = tagData.filter(tag => recipe.recipe_tag.some(tagId => tag.tag_id === tagId));
+            const types = typeData.filter(type => recipe.recipe_type.some(tagId => type.categoty_id === tagId));
             const timeU = recipe.recipe_time_unit.map(unit => {
                 if (unit === 1) {
-                    return "Minutos"
+                    return "Minutos";
                 } else if (unit === 2) {
-                    return "Horas"
+                    return "Horas";
                 } else {
-                    return "Desconocido"
+                    return "Desconocido";
                 }
-            })
-            const unit = unitsData.filter(u => recipe.recipe_ingredient_amount.some(id => u.filter_id === id))
-            console.log(unitsData)
+            });
 
             return {
                 id: recipe.recipe_id,
-                owner: recipe.user_id,
+                owner: {
+                    id: recipe.user_id,
+                    username: ownerName
+                },
                 name: recipe.recipe_name,
                 description: recipe.recipe_description,
                 mainImg: recipe.recipe_img,
@@ -121,7 +152,7 @@ router.get('/get/all', async (req, res) => {
                         return {
                             key: tag.tag_id,
                             value: tag.name,
-                        }
+                        };
                     })
                 },
                 category: {
@@ -130,7 +161,7 @@ router.get('/get/all', async (req, res) => {
                         return {
                             key: type.categoty_id,
                             value: type.category,
-                        }
+                        };
                     })
                 },
                 time: {
@@ -140,7 +171,7 @@ router.get('/get/all', async (req, res) => {
                 ingredients: {
                     count: recipe.recipe_ingredients.length,
                     ingredients: recipe.recipe_ingredients.map((ingredient, i) => {
-                        const unit = unitsData.find(unit => unit.filter_id === recipe.recipe_ingredient_amount[i])
+                        const unit = unitsData.find(unit => unit.filter_id === recipe.recipe_ingredient_amount[i]);
 
                         return {
                             name: ingredient,
@@ -149,17 +180,17 @@ router.get('/get/all', async (req, res) => {
                                 key: unit.filter_id,
                                 value: unit.unit
                             }
-                        }
+                        };
                     })
                 },
                 steps: {
                     count: recipe.recipe_steps.length,
                     steps: recipe.recipe_steps,
                 }
-            }
-        })
+            };
+        }))
 
-        res.json(recipe).status(200)
+        res.json(recipes).status(200)
     } catch (error) {
         console.log('Error ' + error)
     }

@@ -10,7 +10,7 @@
 
 <script>
     function addToFavorites(userId, recipeId) {
-        fetch(`/user/set/${userId}/favorite/${recipeId}`, {
+        fetch(`/api/v1/user/add/favorite/${userId}/recipe/${recipeId}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
