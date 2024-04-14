@@ -118,12 +118,12 @@ router.post('/add/score/:score/:user_id/recipe/:recipe_id', async (req, res) => 
 router.get('/get/all', async (req, res) => {
     try {
         const recipeData = await getAllRecipes()
+        console.log(recipeData)
         const typeData = await getFoodData.foodTypes()
         const tagData = await getFoodData.foodTags()
         const unitsData = await getFoodData.foodUnits()
 
         const recipes = await Promise.all(recipeData.map(async (recipe) => {
-            const ownerName = await getUserById(recipe.user_id)
             const tags = tagData.filter(tag => recipe.recipe_tag.some(tagId => tag.tag_id === tagId));
             const types = typeData.filter(type => recipe.recipe_type.some(tagId => type.categoty_id === tagId));
             const timeU = recipe.recipe_time_unit.map(unit => {
@@ -134,13 +134,13 @@ router.get('/get/all', async (req, res) => {
                 } else {
                     return "Desconocido";
                 }
-            });
+            })
 
             return {
                 id: recipe.recipe_id,
                 owner: {
                     id: recipe.user_id,
-                    username: ownerName
+                    username: recipe.user_basic_information.user_username
                 },
                 name: recipe.recipe_name,
                 description: recipe.recipe_description,

@@ -26,7 +26,7 @@ async function getAllRecipes() {
     try {
         const { data, error } = await supabase
             .from('recipes_basic')
-            .select('*')
+            .select('*, user_basic_information(user_username)')
 
         if (error) {
             throw new Error('Error al obtener las recetas: ' + error.message);
