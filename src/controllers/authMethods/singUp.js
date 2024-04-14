@@ -21,6 +21,32 @@ async function singUp(userId, password) {
     }
 }
 
+async function registerFavorites(id) {
+    try {
+        const { data, error } = await supabase
+            .from('user_basic_favorites')
+            .insert([
+                {
+                    user_id: id
+                },
+            ])
+
+        if (error) throw new Error(error.message)
+
+        return {
+            status: 'OK'
+        }
+    } catch (error) {
+        return {
+            data: null,
+            error: true,
+            errorMessage: error.message,
+            message: 'Hubo un error al crear la cuenta.',
+            status: 'Error'
+        }
+    }
+}
+
 async function register(email, password, name, username, user_last_name, user_pfp) {
     try {
         const { data: basicData, error: profileError } = await supabase
@@ -37,6 +63,7 @@ async function register(email, password, name, username, user_last_name, user_pf
             .select('user_id')
 
         const { error, success } = await singUp(basicData[0].user_id, password)
+        const { status } = await registerFavorites(basicData[0].user_id)
 
         if (profileError) throw new Error('Ocurrio un error al crear la cuenta: ' + profileError.message)
         if (!success) throw new Error(error)
