@@ -22,7 +22,7 @@ const uploads = multer({
 
 router.post('/all-data', uploads.fields([{ name: 'recipeImage', maxCount: 1 }]), async (req, res) => {
     try {
-        var { recipeName, recipeType, recipeTag, recipeTime, recipeTimeUnit, recipeIngredient, recipeIngredientUnit, recipeIngredientUnitCount, recipeSteps } = req.body
+        var { recipeName, recipeType, recipeTag, recipeTime, recipeTimeUnit, recipeIngredient, recipeIngredientUnit, recipeIngredientUnitCount, recipeSteps, recipeDescription } = req.body
 
         recipeIngredient = Array.isArray(recipeIngredient) ? recipeIngredient : [recipeIngredient]
         recipeIngredientUnitCount = Array.isArray(recipeIngredientUnitCount) ? recipeIngredientUnitCount : [recipeIngredientUnitCount]
@@ -37,7 +37,7 @@ router.post('/all-data', uploads.fields([{ name: 'recipeImage', maxCount: 1 }]),
 
         const img = await uploadSingleImage(req.files.recipeImage[0])
 
-        const success = await upload.basicRecipe(userId, recipeName, recipeTag, recipeType, recipeTime, recipeSteps, recipeIngredient, recipeTimeUnit, recipeIngredientUnit, recipeIngredientUnitCount, img)
+        const success = await upload.basicRecipe(userId, recipeName, recipeTag, recipeType, recipeTime, recipeSteps, recipeIngredient, recipeTimeUnit, recipeIngredientUnit, recipeIngredientUnitCount, img, recipeDescription)
 
         if (success) {
             res.json({
