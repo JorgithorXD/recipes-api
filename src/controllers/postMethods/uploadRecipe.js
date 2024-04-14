@@ -1,6 +1,6 @@
 import { supabase } from '../../services/supabase.js'
 
-async function basicRecipe(user_id, recipe_name, recipe_tag, recipe_type, recipe_time, recipe_steps, recipe_ingredients, recipe_time_unit, recipe_ingredient_amount, recipe_ingredient_unit, img) {
+async function basicRecipe(user_id, recipe_name, recipe_tag, recipe_type, recipe_time, recipe_steps, recipe_ingredients, recipe_time_unit, recipe_ingredient_amount, recipe_ingredient_unit, img, recipe_description) {
     try {
         const { data, error } = await supabase
             .from('recipes_basic')
@@ -12,10 +12,11 @@ async function basicRecipe(user_id, recipe_name, recipe_tag, recipe_type, recipe
                 recipe_time: recipe_time,
                 recipe_steps: recipe_steps,
                 recipe_ingredients: recipe_ingredients,
-                recipe_time_unit: recipe_time_unit, 
-                recipe_ingredient_amount: recipe_ingredient_amount, 
+                recipe_time_unit: recipe_time_unit,
+                recipe_ingredient_amount: recipe_ingredient_amount,
                 recipe_ingredient_unit: recipe_ingredient_unit,
                 recipe_img: img,
+                recipe_description: recipe_description
             }]).select('recipe_id')
 
         if (error) {
@@ -25,7 +26,7 @@ async function basicRecipe(user_id, recipe_name, recipe_tag, recipe_type, recipe
         return { success: true }
     } catch (error) {
         console.log('Un error ocurrio en la receta basica: ' + error)
-        return { success: false}
+        return { success: false }
     }
 }
 
