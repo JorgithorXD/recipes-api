@@ -3,7 +3,7 @@ import multer from 'multer'
 import { dirname, join } from 'path'
 import { fileURLToPath } from 'url'
 import { getFoodData } from '../controllers/getMethods/getFoodData.js'
-import { getAllRecipes, getBasicRecipeInformation, getRecipeByRecipeId } from '../controllers/getMethods/getRecipes.js'
+import { getAllRecipes, getBasicRecipeInformation, getRecipeByCategory, getRecipeByRecipeId } from '../controllers/getMethods/getRecipes.js'
 import { getUserById } from '../controllers/getMethods/getUserData.js'
 import { uploadSingleImage } from '../controllers/postMethods/uploadMethods.js'
 import { upload } from '../controllers/postMethods/uploadRecipe.js'
@@ -112,6 +112,88 @@ router.post('/add/score/:score/:user_id/recipe/:recipe_id', async (req, res) => 
             error: true,
             errorMessage: error.message
         })
+    }
+})
+
+router.get('/get/category/:cat', async (req, res) => {
+    try {
+        const { cat } = req.params
+
+        const recipeData = await getRecipeByCategory(cat)
+        const typeData = await getFoodData.foodTypes()
+        const tagData = await getFoodData.foodTags()
+        const unitsData = await getFoodData.foodUnits()
+
+        const recipes = await Promise.all(recipeData.map(async (recipe) => {
+            const tags = tagData.filter(tag => recipe.recipe_tag.some(tagId => tag.tag_id === tagId));
+            const types = typeData.filter(type => recipe.recipe_type.some(tagId => type.categoty_id === tagId));
+            const timeU = recipe.recipe_time_unit.map(unit => {
+                if (unit === 1) {
+                    return "Minutos";
+                } else if (unit === 2) {
+                    return "Horas";
+                } else {
+                    return "Desconocido";
+                }
+            })
+
+            return {
+                id: recipe.recipe_id,
+                owner: {
+                    id: recipe.user_id,
+                    username: recipe.user_basic_information.user_username
+                },
+                name: recipe.recipe_name,
+                description: recipe.recipe_description,
+                mainImg: recipe.recipe_img,
+                addedAt: recipe.created_at,
+                tag: {
+                    count: tags.length,
+                    tags: tags.map(tag => {
+                        return {
+                            key: tag.tag_id,
+                            value: tag.name,
+                        };
+                    })
+                },
+                category: {
+                    count: types.length,
+                    tags: types.map(type => {
+                        return {
+                            key: type.categoty_id,
+                            value: type.category,
+                        };
+                    })
+                },
+                time: {
+                    from: `${recipe.recipe_time[0]} ${timeU[0]}`,
+                    to: `${recipe.recipe_time[1]} ${timeU[1]}`
+                },
+                ingredients: {
+                    count: recipe.recipe_ingredients.length,
+                    ingredients: recipe.recipe_ingredients.map((ingredient, i) => {
+                        const unit = unitsData.find(unit => unit.filter_id === recipe.recipe_ingredient_amount[i]);
+
+                        return {
+                            name: ingredient,
+                            amount: recipe.recipe_ingredient_unit[i],
+                            unit: {
+                                key: unit.filter_id,
+                                value: unit.unit
+                            }
+                        };
+                    })
+                },
+                steps: {
+                    count: recipe.recipe_steps.length,
+                    steps: recipe.recipe_steps,
+                }
+            };
+        }))
+
+        res.json(recipes).status(200)
+    } catch (error) {
+        console.log('Error ' + error)
     }
 })
 
