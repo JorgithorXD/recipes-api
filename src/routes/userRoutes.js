@@ -116,6 +116,43 @@ router.post('/add/favorite/:user_id/recipe/:recipe_id', async (req, res) => {
     }
 })
 
+
+router.post('/remove/favorite/:user_id/recipe/:recipe_id', async (req, res) => {
+    try {
+        const { user_id, recipe_id } = req.params
+
+        if (!user_id || user_id == "" || user_id == null || user_id == undefined || user_id == NaN) throw new Error('Para realizar esta accion necesitas iniciar sesion')
+
+        var favoriteArray = await updateFavoriteRecipes(user_id)
+
+        if (!(favoriteArray.includes(recipe_id))) {
+            res.json({
+                message: 'La receta no esta agregada como favoritos',
+                status: 'Fail',
+            })
+        } else {
+            let removeFavorites = []
+            let removeId = favoriteArray.indexOf(recipe_id)
+
+            favoriteArray.filter((favorite, i) => { 
+                if (removeId !== i) removeFavorites.push(favorite)
+            })
+
+            const { data } = await setFavoriteRecipe(user_id, favoriteArray)
+
+            res.json({
+                message: 'Receta eliminada de favoritos',
+                status: 'Success',
+            })
+        }
+    } catch (error) {
+        res.json({
+            message: error,
+            status: 'Error',
+        })
+    }
+})
+
 router.get('/get-data/:id', async (req, res) => {
     try {
         const { id } = req.params

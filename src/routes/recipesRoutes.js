@@ -3,7 +3,7 @@ import multer from 'multer'
 import { dirname, join } from 'path'
 import { fileURLToPath } from 'url'
 import { getFoodData } from '../controllers/getMethods/getFoodData.js'
-import { getAllRecipes, getBasicRecipeInformation, getRecipeByCategory, getRecipeByRecipeId } from '../controllers/getMethods/getRecipes.js'
+import { getAllRecipes, getBasicRecipeInformation, getRandomRecipe, getRecipeByCategory, getRecipeByRecipeId } from '../controllers/getMethods/getRecipes.js'
 import { getUserById } from '../controllers/getMethods/getUserData.js'
 import { uploadSingleImage } from '../controllers/postMethods/uploadMethods.js'
 import { upload } from '../controllers/postMethods/uploadRecipe.js'
@@ -194,6 +194,24 @@ router.get('/get/category/:cat', async (req, res) => {
         res.json(recipes).status(200)
     } catch (error) {
         console.log('Error ' + error)
+    }
+})
+
+
+router.get('/get/daily', async (req, res) => {
+    try {
+        const { data, error } = await getRandomRecipe()
+
+        if (error) throw new Error(error.message)
+
+        res.json(data)
+    } catch (error) {
+        res.json({
+            status: 'Error',
+            error: true,
+            erroMessage: error.message,
+            data: 'Hubo un error al cargar la receta del dia'
+        })
     }
 })
 

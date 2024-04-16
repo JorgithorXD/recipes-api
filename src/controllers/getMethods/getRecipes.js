@@ -114,11 +114,31 @@ async function getBasicRecipeInformation() {
     }
 }
 
+async function getRandomRecipe() {
+    try {
+        const { data, error } = await supabase
+            .from('random_recipe_2')
+            .select('*')
+            .limit(1)
+            .single()
+
+        if (error) throw new Error(error.message)
+
+        return {
+            data, error
+        }
+
+    } catch (error) {
+        throw new Error('Error al obtener la reeceta aleatoria: ' + error.message)
+    }
+}
+
 export {
     getAllFrom,
     getAllRecipes,
     getRecipeByUserId,
     getRecipeByRecipeId,
     getBasicRecipeInformation,
-    getRecipeByCategory
+    getRecipeByCategory,
+    getRandomRecipe
 }
