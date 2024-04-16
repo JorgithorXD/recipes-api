@@ -12,7 +12,7 @@ const router = express.Router()
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 
-const storage = multer.memoryStorage();
+const storage = multer.memoryStorage()
 const uploads = multer({
     storage: storage,
     preservePath: true
@@ -43,7 +43,7 @@ router.post('/all-data', uploads.fields([{ name: 'recipeImage', maxCount: 1 }]),
                 message: 'La receta fue subida'
             })
         } else {
-            throw new Error('Error al subir la receta.');
+            throw new Error('Error al subir la receta.')
         }
     } catch (error) {
         res.status(500).json({
@@ -125,15 +125,15 @@ router.get('/get/category/:cat', async (req, res) => {
         const unitsData = await getFoodData.foodUnits()
 
         const recipes = await Promise.all(recipeData.map(async (recipe) => {
-            const tags = tagData.filter(tag => recipe.recipe_tag.some(tagId => tag.tag_id === tagId));
-            const types = typeData.filter(type => recipe.recipe_type.some(tagId => type.categoty_id === tagId));
+            const tags = tagData.filter(tag => recipe.recipe_tag.some(tagId => tag.tag_id === tagId))
+            const types = typeData.filter(type => recipe.recipe_type.some(tagId => type.categoty_id === tagId))
             const timeU = recipe.recipe_time_unit.map(unit => {
                 if (unit === 1) {
-                    return "Minutos";
+                    return "Minutos"
                 } else if (unit === 2) {
-                    return "Horas";
+                    return "Horas"
                 } else {
-                    return "Desconocido";
+                    return "Desconocido"
                 }
             })
 
@@ -153,7 +153,7 @@ router.get('/get/category/:cat', async (req, res) => {
                         return {
                             key: tag.tag_id,
                             value: tag.name,
-                        };
+                        }
                     })
                 },
                 category: {
@@ -162,7 +162,7 @@ router.get('/get/category/:cat', async (req, res) => {
                         return {
                             key: type.categoty_id,
                             value: type.category,
-                        };
+                        }
                     })
                 },
                 time: {
@@ -172,7 +172,7 @@ router.get('/get/category/:cat', async (req, res) => {
                 ingredients: {
                     count: recipe.recipe_ingredients.length,
                     ingredients: recipe.recipe_ingredients.map((ingredient, i) => {
-                        const unit = unitsData.find(unit => unit.filter_id === recipe.recipe_ingredient_amount[i]);
+                        const unit = unitsData.find(unit => unit.filter_id === recipe.recipe_ingredient_amount[i])
 
                         return {
                             name: ingredient,
@@ -181,14 +181,14 @@ router.get('/get/category/:cat', async (req, res) => {
                                 key: unit.filter_id,
                                 value: unit.unit
                             }
-                        };
+                        }
                     })
                 },
                 steps: {
                     count: recipe.recipe_steps.length,
                     steps: recipe.recipe_steps,
                 }
-            };
+            }
         }))
 
         res.json(recipes).status(200)
@@ -198,19 +198,114 @@ router.get('/get/category/:cat', async (req, res) => {
 })
 
 
+let lastDailyRecipe = null
+
 router.get('/get/daily', async (req, res) => {
     try {
-        const { data, error } = await getRandomRecipe()
+        let data = null
+        let error = null
 
-        if (error) throw new Error(error.message)
+        const typeData = await getFoodData.foodTypes()
+        const tagData = await getFoodData.foodTags()
+        const unitsData = await getFoodData.foodUnits()
 
-        res.json(data)
+        const currentTime = new Date()
+
+        if (lastDailyRecipe && currentTime - new Date(lastDailyRecipe.date) < 12 * 60 * 60 * 1000) {
+            data = lastDailyRecipe.data
+        } else {
+            let retries = 3
+            while (retries > 0) {
+                const result = await getRandomRecipe()
+                if (!result.error) {
+                    data = result.data
+                    break
+                }
+                retries--
+            }
+
+            if (!data) {
+                data = lastDailyRecipe ? lastDailyRecipe.data : null
+            } else {
+                lastDailyRecipe = {
+                    date: currentTime.toISOString(),
+                    data: data
+                }
+            }
+        }
+
+        const tags = tagData.filter(tag => data.recipe_tag.some(tagId => tag.tag_id === tagId))
+        const types = typeData.filter(type => data.recipe_type.some(tagId => type.categoty_id === tagId))
+        const timeU = data.recipe_time_unit.map(unit => {
+            if (unit === 1) {
+                return "Minutos"
+            } else if (unit === 2) {
+                return "Horas"
+            } else {
+                return "Desconocido"
+            }
+        })
+
+        const recipe = {
+            id: data.recipe_id,
+            owner: {
+                id: data.user_id,
+                username: data.user_username
+            },
+            name: data.recipe_name,
+            description: data.recipe_description,
+            mainImg: data.recipe_img,
+            addedAt: data.created_at,
+            tag: {
+                count: tags.length,
+                tags: tags.map(tag => {
+                    return {
+                        key: tag.tag_id,
+                        value: tag.name,
+                    }
+                })
+            },
+            category: {
+                count: types.length,
+                tags: types.map(type => {
+                    return {
+                        key: type.categoty_id,
+                        value: type.category,
+                    }
+                })
+            },
+            time: {
+                from: `${data.recipe_time[0]} ${timeU[0]}`,
+                to: `${data.recipe_time[1]} ${timeU[1]}`
+            },
+            ingredients: {
+                count: data.recipe_ingredients.length,
+                ingredients: data.recipe_ingredients.map((ingredient, i) => {
+                    const unit = unitsData.find(unit => unit.filter_id === data.recipe_ingredient_amount[i])
+
+                    return {
+                        name: ingredient,
+                        amount: data.recipe_ingredient_unit[i],
+                        unit: {
+                            key: unit.filter_id,
+                            value: unit.unit
+                        }
+                    }
+                })
+            },
+            steps: {
+                count: data.recipe_steps.length,
+                steps: data.recipe_steps,
+            }
+        }
+
+        res.json(recipe)
     } catch (error) {
         res.json({
             status: 'Error',
             error: true,
-            erroMessage: error.message,
-            data: 'Hubo un error al cargar la receta del dia'
+            errorMessage: error.message,
+            data: 'Hubo un error al cargar la receta del día'
         })
     }
 })
@@ -224,15 +319,15 @@ router.get('/get/all', async (req, res) => {
         const unitsData = await getFoodData.foodUnits()
 
         const recipes = await Promise.all(recipeData.map(async (recipe) => {
-            const tags = tagData.filter(tag => recipe.recipe_tag.some(tagId => tag.tag_id === tagId));
-            const types = typeData.filter(type => recipe.recipe_type.some(tagId => type.categoty_id === tagId));
+            const tags = tagData.filter(tag => recipe.recipe_tag.some(tagId => tag.tag_id === tagId))
+            const types = typeData.filter(type => recipe.recipe_type.some(tagId => type.categoty_id === tagId))
             const timeU = recipe.recipe_time_unit.map(unit => {
                 if (unit === 1) {
-                    return "Minutos";
+                    return "Minutos"
                 } else if (unit === 2) {
-                    return "Horas";
+                    return "Horas"
                 } else {
-                    return "Desconocido";
+                    return "Desconocido"
                 }
             })
 
@@ -252,7 +347,7 @@ router.get('/get/all', async (req, res) => {
                         return {
                             key: tag.tag_id,
                             value: tag.name,
-                        };
+                        }
                     })
                 },
                 category: {
@@ -261,7 +356,7 @@ router.get('/get/all', async (req, res) => {
                         return {
                             key: type.categoty_id,
                             value: type.category,
-                        };
+                        }
                     })
                 },
                 time: {
@@ -271,7 +366,7 @@ router.get('/get/all', async (req, res) => {
                 ingredients: {
                     count: recipe.recipe_ingredients.length,
                     ingredients: recipe.recipe_ingredients.map((ingredient, i) => {
-                        const unit = unitsData.find(unit => unit.filter_id === recipe.recipe_ingredient_amount[i]);
+                        const unit = unitsData.find(unit => unit.filter_id === recipe.recipe_ingredient_amount[i])
 
                         return {
                             name: ingredient,
@@ -280,14 +375,14 @@ router.get('/get/all', async (req, res) => {
                                 key: unit.filter_id,
                                 value: unit.unit
                             }
-                        };
+                        }
                     })
                 },
                 steps: {
                     count: recipe.recipe_steps.length,
                     steps: recipe.recipe_steps,
                 }
-            };
+            }
         }))
 
         res.json(recipes).status(200)
