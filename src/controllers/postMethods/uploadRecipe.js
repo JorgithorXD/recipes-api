@@ -34,7 +34,7 @@ async function calicateRecipe(score, user_id, recipe_id) {
     try {
         const { data, error } = await supabase
             .from('recipes_basic_score')
-            .insert(
+            .upsert(
                 {
                     recipe_id: recipe_id,
                     user_id: user_id,
