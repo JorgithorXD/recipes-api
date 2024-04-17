@@ -130,21 +130,21 @@ router.post('/remove/favorite/:user_id/recipe/:recipe_id', async (req, res) => {
                 message: 'La receta no esta agregada como favoritos',
                 status: 'Fail',
             })
-        } else {
-            let removeFavorites = []
-            let removeId = favoriteArray.indexOf(recipe_id)
-
-            favoriteArray.filter((favorite, i) => { 
-                if (removeId !== i) removeFavorites.push(favorite)
-            })
-
-            const { data } = await setFavoriteRecipe(user_id, favoriteArray)
-
-            res.json({
-                message: 'Receta eliminada de favoritos',
-                status: 'Success',
-            })
         }
+        let removeFavorites = []
+        let removeId = favoriteArray.indexOf(recipe_id)
+
+        favoriteArray.filter((favorite, i) => {
+            if (removeId !== i) removeFavorites.push(favorite)
+        })
+
+        const { data } = await setFavoriteRecipe(user_id, removeFavorites)
+
+        res.json({
+            message: 'Receta eliminada de favoritos',
+            status: 'Success',
+        })
+
     } catch (error) {
         res.json({
             message: error,
