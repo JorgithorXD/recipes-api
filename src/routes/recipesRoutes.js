@@ -313,7 +313,6 @@ router.get('/get/daily', async (req, res) => {
 router.get('/get/all', async (req, res) => {
     try {
         const recipeData = await getAllRecipes()
-        console.log(recipeData)
         const typeData = await getFoodData.foodTypes()
         const tagData = await getFoodData.foodTags()
         const unitsData = await getFoodData.foodUnits()
@@ -394,12 +393,10 @@ router.get('/get/all', async (req, res) => {
 router.get('/get/all/basic', async (req, res) => {
     try {
         const recipeData = await getBasicRecipeInformation()
-        const typeData = await getFoodData.foodTypes()
         const tagData = await getFoodData.foodTags()
 
         const recipe = recipeData.map(recipe => {
             const tags = tagData.filter(tag => recipe.recipe_tag.some(tagId => tag.tag_id === tagId))
-            const types = typeData.filter(type => recipe.recipe_type.some(tagId => type.categoty_id === tagId))
             const timeU = recipe.recipe_time_unit.map(unit => {
                 if (unit === 1) {
                     return "Minutos"
@@ -412,6 +409,10 @@ router.get('/get/all/basic', async (req, res) => {
 
             return {
                 id: recipe.recipe_id,
+                owner: {
+                    id: recipe.user_id,
+                    username: recipe.user_basic_information.user_username
+                },
                 name: recipe.recipe_name,
                 mainImg: recipe.recipe_img,
                 tag: {
@@ -420,15 +421,6 @@ router.get('/get/all/basic', async (req, res) => {
                         return {
                             key: tag.tag_id,
                             value: tag.name,
-                        }
-                    })
-                },
-                category: {
-                    count: types.length,
-                    tags: types.map(type => {
-                        return {
-                            key: type.categoty_id,
-                            value: type.category,
                         }
                     })
                 },
@@ -450,8 +442,79 @@ router.get('/get/:id', async (req, res) => {
     try {
         const { id } = req.params
 
-        const recipe = await getRecipeByRecipeId(id)
-        res.json(recipe).status(200)
+        const recipeData = await getRecipeByRecipeId(id)
+        const typeData = await getFoodData.foodTypes()
+        const tagData = await getFoodData.foodTags()
+        const unitsData = await getFoodData.foodUnits()
+
+
+        const tags = tagData.filter(tag => recipeData.recipe_tag.some(tagId => tag.tag_id === tagId))
+        const types = typeData.filter(type => recipeData.recipe_type.some(tagId => type.categoty_id === tagId))
+        const timeU = recipeData.recipe_time_unit.map(unit => {
+            if (unit === 1) {
+                return "Minutos"
+            } else if (unit === 2) {
+                return "Horas"
+            } else {
+                return "Desconocido"
+            }
+        })
+
+        const recipes = {
+            id: recipeData.recipe_id,
+            owner: {
+                id: recipeData.user_id,
+                username: recipeData.user_basic_information.user_username
+            },
+            name: recipeData.recipe_name,
+            description: recipeData.recipe_description,
+            mainImg: recipeData.recipe_img,
+            addedAt: recipeData.created_at,
+            tag: {
+                count: tags.length,
+                tags: tags.map(tag => {
+                    return {
+                        key: tag.tag_id,
+                        value: tag.name,
+                    }
+                })
+            },
+            category: {
+                count: types.length,
+                tags: types.map(type => {
+                    return {
+                        key: type.categoty_id,
+                        value: type.category,
+                    }
+                })
+            },
+            time: {
+                from: `${recipeData.recipe_time[0]} ${timeU[0]}`,
+                to: `${recipeData.recipe_time[1]} ${timeU[1]}`
+            },
+            ingredients: {
+                count: recipeData.recipe_ingredients.length,
+                ingredients: recipeData.recipe_ingredients.map((ingredient, i) => {
+                    const unit = unitsData.find(unit => unit.filter_id === recipeData.recipe_ingredient_amount[i])
+
+                    return {
+                        name: ingredient,
+                        amount: recipeData.recipe_ingredient_unit[i],
+                        unit: {
+                            key: unit.filter_id,
+                            value: unit.unit
+                        }
+                    }
+                })
+            },
+            steps: {
+                count: recipeData.recipe_steps.length,
+                steps: recipeData.recipe_steps,
+            }
+        }
+
+
+        res.json(recipes).status(200)
     } catch (error) {
         console.log('Error ' + error)
     }

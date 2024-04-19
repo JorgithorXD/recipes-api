@@ -76,14 +76,14 @@ async function getRecipeByRecipeId(id) {
     try {
         const { data, error } = await supabase
             .from('recipes_basic')
-            .select('*')
+            .select('*, user_basic_information(user_username)')
             .eq('recipe_id', id)
 
         if (error) {
             throw new Error('Error al obtener recetas con imágenes: ' + error.message);
         }
 
-        return { data }
+        return data[0]
     } catch (error) {
         throw new Error('Error al obtener recetas con imágenes: ' + error.message)
     }
