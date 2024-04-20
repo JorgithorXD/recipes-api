@@ -6,7 +6,7 @@ import { checkPassword, getUserData } from '../controllers/authMethods/logIn.js'
 import multer from 'multer'
 import { uploadSingleImage, uploadImageWithoutBuffer } from '../controllers/postMethods/uploadMethods.js'
 import { getUserDataWithRecipes, getUserFavoriteRecipes, getAllUserData } from '../controllers/getMethods/getUserData.js'
-import { setFavoriteRecipe, updateFavoriteRecipes } from '../controllers/postMethods/uploadUserData.js'
+import { setFavoriteRecipe, updateFavoriteRecipes, updateUserData } from '../controllers/postMethods/uploadUserData.js'
 
 const router = express.Router()
 
@@ -81,6 +81,41 @@ router.post('/auth/register', async (req, res) => {
         res.json({
             id: null,
             error: error,
+        })
+    }
+})
+
+router.post('/update/user-data/:id', async (req, res) => {
+    try {
+
+        const { img, username, name, lastname, description, color } = req.body
+        const { id } = req.params
+
+        var url
+
+        if (!img || !img.base64 || img.base64 === "" || img.base64.length < 1) {
+            url = 'https://ik.imagekit.io/uv3u01crv/User_default.webp'
+        } else {
+            const buffer = Buffer.from(img.base64, 'base64')
+            url = await uploadImageWithoutBuffer(buffer, img.fileName)
+        }
+
+        const update = await updateUserData(id, name, username, lastname, url, description, color)
+
+        res.json(
+            {
+                status: 'Ok',
+                message: 'Datos a actualizados correctamente',
+                error: false,
+                errorMessage: null
+            }
+        )
+    } catch (error) {
+        res.json({
+            status: 'Fail',
+            message: 'Los datos no se pudieron actualizar',
+            error: true,
+            errorMessage: error.message
         })
     }
 })
