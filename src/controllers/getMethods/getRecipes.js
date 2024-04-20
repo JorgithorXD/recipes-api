@@ -57,16 +57,21 @@ async function getRecipeByCategory(cat) {
 
 async function getRecipeByUserId(id) {
     try {
+        let recipes = []
         const { data, error } = await supabase
             .from('recipes_basic')
-            .select('*')
+            .select('recipe_id')
             .eq('user_id', id)
 
         if (error) {
             throw new Error('Error al obtener recetas con imágenes: ' + error.message);
         }
 
-        return { data, error }
+        if (data) {
+            recipes = data.map(recipe => recipe.recipe_id);
+        }
+
+        return { data: recipes, error }
     } catch (error) {
         throw new Error('Error al obtener recetas con imágenes: ' + error.message)
     }
@@ -101,7 +106,8 @@ async function getBasicRecipeInformation() {
                 recipe_type,
                 recipe_time,
                 recipe_time_unit,
-                recipe_img
+                recipe_img,
+                user_basic_information(user_username)
             `)
 
         if (error) {
@@ -109,6 +115,33 @@ async function getBasicRecipeInformation() {
         }
 
         return data
+    } catch (error) {
+        throw new Error('Error al obtener recetas con imágenes: ' + error.message)
+    }
+}
+
+async function getBasicRecipeInformationById(id) {
+    try {
+        const { data, error } = await supabase
+            .from('recipes_basic')
+            .select(`
+                recipe_id,
+                user_id,
+                recipe_name,
+                recipe_tag,
+                recipe_type,
+                recipe_time,
+                recipe_time_unit,
+                recipe_img,
+                user_basic_information(user_username)
+            `)
+            .eq('recipe_id', id)
+
+        if (error) {
+            throw new Error('Error al obtener las recetas: ' + error.message);
+        }
+
+        return data[0]
     } catch (error) {
         throw new Error('Error al obtener recetas con imágenes: ' + error.message)
     }
@@ -140,5 +173,6 @@ export {
     getRecipeByRecipeId,
     getBasicRecipeInformation,
     getRecipeByCategory,
-    getRandomRecipe
+    getRandomRecipe,
+    getBasicRecipeInformationById
 }

@@ -3,7 +3,7 @@ import multer from 'multer'
 import { dirname, join } from 'path'
 import { fileURLToPath } from 'url'
 import { getFoodData } from '../controllers/getMethods/getFoodData.js'
-import { getAllRecipes, getBasicRecipeInformation, getRandomRecipe, getRecipeByCategory, getRecipeByRecipeId } from '../controllers/getMethods/getRecipes.js'
+import { getAllRecipes, getBasicRecipeInformation, getBasicRecipeInformationById, getRandomRecipe, getRecipeByCategory, getRecipeByRecipeId } from '../controllers/getMethods/getRecipes.js'
 import { getUserById } from '../controllers/getMethods/getUserData.js'
 import { uploadSingleImage } from '../controllers/postMethods/uploadMethods.js'
 import { upload } from '../controllers/postMethods/uploadRecipe.js'
@@ -431,6 +431,55 @@ router.get('/get/all/basic', async (req, res) => {
 
             }
         })
+
+        res.json(recipe).status(200)
+    } catch (error) {
+        console.log('Error ' + error)
+    }
+})
+
+router.get('/get/:id/basic', async (req, res) => {
+    try {
+        const { id } = req.params
+
+        const recipeData = await getBasicRecipeInformationById(id)
+        const tagData = await getFoodData.foodTags()
+
+
+        const tags = tagData.filter(tag => recipeData.recipe_tag.some(tagId => tag.tag_id === tagId))
+        const timeU = recipeData.recipe_time_unit.map(unit => {
+            if (unit === 1) {
+                return "Minutos"
+            } else if (unit === 2) {
+                return "Horas"
+            } else {
+                return "Desconocido"
+            }
+        })
+
+        const recipe = {
+            id: recipeData.recipe_id,
+            owner: {
+                id: recipeData.user_id,
+                username: recipeData.user_basic_information.user_username
+            },
+            name: recipeData.recipe_name,
+            mainImg: recipeData.recipe_img,
+            tag: {
+                count: tags.length,
+                tags: tags.map(tag => {
+                    return {
+                        key: tag.tag_id,
+                        value: tag.name,
+                    }
+                })
+            },
+            time: {
+                from: `${recipeData.recipe_time[0]} ${timeU[0]}`,
+                to: `${recipeData.recipe_time[1]} ${timeU[1]}`
+            },
+
+        }
 
         res.json(recipe).status(200)
     } catch (error) {
