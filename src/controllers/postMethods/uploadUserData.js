@@ -60,22 +60,17 @@ async function updateFavoriteRecipes(id) {
     }
 }
 
-async function updateUserData(id, name, username, lastname, image, description, color) {
+async function updateUserData(id, update) {
     try {
         const { data, error } = await supabase
             .from('user_basic_information')
-            .update({
-                user_name: name,
-                user_username: username,
-                user_last_name: lastname,
-                user_description: description,
-                user_color: color,
-                user_pfp: image,
-        })
-        .eq('user_id', id)
+            .update(update)
+            .eq('user_id', id)
+
+        if (error) throw new Error(error.message)
 
     } catch (error) {
-        console.log(error)
+        return (error)
     }
 }
 

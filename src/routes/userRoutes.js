@@ -94,13 +94,26 @@ router.post('/update/user-data/:id', async (req, res) => {
         var url
 
         if (!img || !img.base64 || img.base64 === "" || img.base64.length < 1) {
-            url = 'https://ik.imagekit.io/uv3u01crv/User_default.webp'
+            url = ""
         } else {
             const buffer = Buffer.from(img.base64, 'base64')
             url = await uploadImageWithoutBuffer(buffer, img.fileName)
         }
 
-        const update = await updateUserData(id, name, username, lastname, url, description, color)
+        const updates = {
+            user_name: name,
+            user_username: username,
+            user_last_name: lastname,
+            user_description: description,
+            user_color: color,
+            user_pfp: url,
+        }
+
+        const filteredUpdates = Object.fromEntries(
+            Object.entries(updates).filter(([_, value]) => value !== "" && value !== undefined)
+        )
+
+        const update = await updateUserData(id, filteredUpdates)
 
         res.json(
             {
