@@ -69,8 +69,20 @@ async function updateUserData(id, update) {
 
         if (error) throw new Error(error.message)
 
+        return {
+            status: 'Ok',
+            message: 'Datos actualizados',
+            error: false,
+            errorMessage: null
+        }
+
     } catch (error) {
-        return (error)
+        return {
+            status: 'Fail',
+            message: 'No se pudieron actualizar los datos',
+            error: true,
+            errorMessage: error.message
+        }
     }
 }
 

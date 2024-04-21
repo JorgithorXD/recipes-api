@@ -113,12 +113,14 @@ router.post('/update/user-data/:id', async (req, res) => {
             Object.entries(updates).filter(([_, value]) => value !== "" && value !== undefined)
         )
 
-        const update = await updateUserData(id, filteredUpdates)
+        const { status, error, errorMessage, message } = await updateUserData(id, filteredUpdates)
+
+        if (error || status == 'Fail') throw new Error(errorMessage)
 
         res.json(
             {
-                status: 'Ok',
-                message: 'Datos a actualizados correctamente',
+                status: status,
+                message: message,
                 error: false,
                 errorMessage: null
             }
