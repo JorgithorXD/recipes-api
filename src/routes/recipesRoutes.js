@@ -3,7 +3,7 @@ import multer from 'multer'
 import { dirname, join } from 'path'
 import { fileURLToPath } from 'url'
 import { getFoodData } from '../controllers/getMethods/getFoodData.js'
-import { getAllRecipes, getBasicRecipeInformation, getBasicRecipeInformationById, getRandomRecipe, getRecipeByCategory, getRecipeByRecipeId } from '../controllers/getMethods/getRecipes.js'
+import { getAllRecipes, getBasicRecipeInformation, getBasicRecipeInformationById, getRandomRecipe, getRecipeByCategory, getRecipeByRecipeId, getRecipeScore } from '../controllers/getMethods/getRecipes.js'
 import { getUserById } from '../controllers/getMethods/getUserData.js'
 import { uploadSingleImage } from '../controllers/postMethods/uploadMethods.js'
 import { upload } from '../controllers/postMethods/uploadRecipe.js'
@@ -112,6 +112,39 @@ router.post('/add/score/:score/:user_id/recipe/:recipe_id', async (req, res) => 
             error: true,
             errorMessage: error.message
         })
+    }
+})
+
+router.get('/get/score/:id', async (req, res) => {
+    try {
+        const { id } = req.params
+
+        const { score, status, error, errorMessage, amount, prom } = await getRecipeScore(id)
+
+        if (error) throw new Error(errorMessage)
+
+        res.json(
+            {
+                status,
+                error,
+                errorMessage,
+                score,
+                amount,
+                prom: prom
+            }
+        )
+
+    } catch (error) {
+        res.json(
+            {
+                status: 'Fail',
+                error: true,
+                errorMessage: error,
+                score: 0,
+                amount: 0,
+                prom: 0
+            }
+        )
     }
 })
 

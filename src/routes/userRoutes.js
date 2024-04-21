@@ -7,6 +7,7 @@ import multer from 'multer'
 import { uploadSingleImage, uploadImageWithoutBuffer } from '../controllers/postMethods/uploadMethods.js'
 import { getUserDataWithRecipes, getUserFavoriteRecipes, getAllUserData } from '../controllers/getMethods/getUserData.js'
 import { setFavoriteRecipe, updateFavoriteRecipes, updateUserData } from '../controllers/postMethods/uploadUserData.js'
+import { getAllRecipeScoresByUserId, getRecipeScoreByUserId } from '../controllers/getMethods/getRecipes.js'
 
 const router = express.Router()
 
@@ -156,6 +157,109 @@ router.post('/add/favorite/:user_id/recipe/:recipe_id', async (req, res) => {
             res.json({
                 message: 'Receta agregada a favoritos',
                 status: 'Success',
+            })
+        }
+    } catch (error) {
+        res.json({
+            message: error,
+            status: 'Error',
+        })
+    }
+})
+
+router.get('/get/score/:userid', async (req, res) => {
+    try {
+        const { userid } = req.params
+
+        const { score, status, error, errorMessage, amount } = await getAllRecipeScoresByUserId(userid)
+
+        if (error) throw new Error(errorMessage)
+
+        res.json(
+            {
+                status,
+                error,
+                errorMessage,
+                score,
+                amount,
+            }
+        )
+
+    } catch (error) {
+        res.json(
+            {
+                status: 'Fail',
+                error: true,
+                errorMessage: error,
+                score: 0,
+                amount: 0,
+            }
+        )
+    }
+})
+
+router.get('/get/score/:userid/recipe/:recipeid', async (req, res) => {
+    try {
+        const { userid, recipeid } = req.params
+
+        const { score, status, error, errorMessage, amount } = await getRecipeScoreByUserId(userid, recipeid)
+
+        if (error) throw new Error(errorMessage)
+        if (score = []) {
+            res.json(
+                {
+                    status: 'No score',
+                    error,
+                    errorMessage: null,
+                    score: 0,
+                    amount: 0,
+                }
+            )
+        }
+
+        res.json(
+            {
+                status,
+                error,
+                errorMessage,
+                score,
+                amount,
+            }
+        )
+
+    } catch (error) {
+        res.json(
+            {
+                status: 'Fail',
+                error: true,
+                errorMessage: error,
+                score: 0,
+                amount: 0,
+            }
+        )
+    }
+})
+
+
+router.get('/check/favorite/:user_id/recipe/:recipe_id', async (req, res) => {
+    try {
+        const { user_id, recipe_id } = req.params
+
+        if (!user_id || user_id == "" || user_id == null || user_id == undefined || user_id == NaN) throw new Error('Para realizar esta accion necesitas iniciar sesion')
+
+        var favoriteArray = await updateFavoriteRecipes(user_id)
+
+        if (favoriteArray.includes(recipe_id)) {
+            res.json({
+                message: 'La receta esta agregada en los favoritos',
+                status: 'Success',
+                favorite: true
+            })
+        } else {
+            res.json({
+                message: 'La receta no esta agregada en favoritos',
+                status: 'Success',
+                favorite: false
             })
         }
     } catch (error) {

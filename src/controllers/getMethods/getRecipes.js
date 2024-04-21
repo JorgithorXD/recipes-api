@@ -94,6 +94,119 @@ async function getRecipeByRecipeId(id) {
     }
 }
 
+async function getAllRecipeScoresByUserId(id) {
+    try {
+        const { data, error } = await supabase
+            .from('recipes_basic_score')
+            .select('recipe_id, score')
+            .eq('user_id', id)
+
+        if (error) throw new Error(error.message)
+
+        const score = data.map(score => {
+            return {
+                recipe: score.recipe_id,
+                score: score.score
+            }
+        })
+
+
+        return {
+            status: 'Ok',
+            score: score,
+            amount: score.length,
+            error: false,
+            errorMessage: null
+        }
+    } catch (error) {
+        return {
+            status: 'Fail',
+            score: null,
+            amount: score.length,
+            prom: 0,
+            error: true,
+            errorMessage: error
+        }
+    }
+}
+
+
+async function getRecipeScoreByUserId(userid, recipeid) {
+    try {
+        const { data, error } = await supabase
+            .from('recipes_basic_score')
+            .select('recipe_id, score')
+            .eq('user_id', userid)
+            .eq('recipe_id', recipeid)
+
+        if (error) throw new Error(error.message)
+
+        const score = data.map(score => {
+            return {
+                recipe: score.recipe_id,
+                score: score.score
+            }
+        })
+
+
+        return {
+            status: 'Ok',
+            score: score,
+            amount: score.length,
+            error: false,
+            errorMessage: null
+        }
+    } catch (error) {
+        return {
+            status: 'Fail',
+            score: null,
+            amount: score.length,
+            prom: 0,
+            error: true,
+            errorMessage: error
+        }
+    }
+}
+
+async function getRecipeScore(id) {
+    try {
+        const { data, error } = await supabase
+            .from('recipes_basic_score')
+            .select('score')
+            .eq('recipe_id', id)
+
+        if (error) throw new Error(error.message)
+
+        const score = data.map(score => score.score)
+        const prome = () => {
+            let r = 0
+            for (let i = 0; i < score.length; i++) {
+                r = r + score[i]
+            }
+            console.log(r)
+            return (r / score.length)
+        }
+
+        return {
+            status: 'Ok',
+            score: score,
+            amount: score.length,
+            prom: prome(),
+            error: false,
+            errorMessage: null
+        }
+    } catch (error) {
+        return {
+            status: 'Fail',
+            score: null,
+            amount: score.length,
+            prom: 0,
+            error: true,
+            errorMessage: error
+        }
+    }
+}
+
 async function getBasicRecipeInformation() {
     try {
         const { data, error } = await supabase
@@ -174,5 +287,8 @@ export {
     getBasicRecipeInformation,
     getRecipeByCategory,
     getRandomRecipe,
-    getBasicRecipeInformationById
+    getBasicRecipeInformationById,
+    getRecipeScore,
+    getAllRecipeScoresByUserId,
+    getRecipeScoreByUserId
 }
