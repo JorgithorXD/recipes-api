@@ -5,7 +5,7 @@ import { fileURLToPath } from 'url'
 import { getFoodData } from '../controllers/getMethods/getFoodData.js'
 import { getAllRecipes, getBasicRecipeInformation, getBasicRecipeInformationById, getRandomRecipe, getRecipeByCategory, getRecipeByRecipeId, getRecipeScore } from '../controllers/getMethods/getRecipes.js'
 import { getUserById } from '../controllers/getMethods/getUserData.js'
-import { uploadSingleImage } from '../controllers/postMethods/uploadMethods.js'
+import { uploadImageWithoutBuffer, uploadSingleImage } from '../controllers/postMethods/uploadMethods.js'
 import { upload } from '../controllers/postMethods/uploadRecipe.js'
 
 const router = express.Router()
@@ -34,6 +34,40 @@ router.post('/all-data', uploads.fields([{ name: 'recipeImage', maxCount: 1 }]),
         const userId = req.cookies['logged-user-id'] ?? '66cc5465-8cac-4462-97a0-707a6652e32f'
 
         const img = await uploadSingleImage(req.files.recipeImage[0])
+
+        const success = await upload.basicRecipe(userId, recipeName, recipeTag, recipeType, recipeTime, recipeSteps, recipeIngredient, recipeTimeUnit, recipeIngredientUnit, recipeIngredientUnitCount, img, recipeDescription)
+
+        if (success) {
+            res.json({
+                status: 'OK',
+                message: 'La receta fue subida'
+            })
+        } else {
+            throw new Error('Error al subir la receta.')
+        }
+    } catch (error) {
+        res.status(500).json({
+            status: 'Error',
+            message: error.message
+        })
+    }
+})
+
+router.post('/post/recipe', async (req, res) => {
+    try {
+        var { userId, recipeName, recipeType, recipeTag, recipeTime, recipeTimeUnit, recipeIngredient, recipeIngredientUnit, recipeIngredientUnitCount, recipeSteps, recipeDescription, Img } = req.body
+
+        recipeIngredient = Array.isArray(recipeIngredient) ? recipeIngredient : [recipeIngredient]
+        recipeIngredientUnitCount = Array.isArray(recipeIngredientUnitCount) ? recipeIngredientUnitCount : [recipeIngredientUnitCount]
+        recipeIngredientUnit = Array.isArray(recipeIngredientUnit) ? recipeIngredientUnit : [recipeIngredientUnit]
+        recipeTag = Array.isArray(recipeTag) ? recipeTag : [recipeTag]
+        recipeType = Array.isArray(recipeType) ? recipeType : [recipeType]
+        recipeTime = Array.isArray(recipeTime) ? recipeTime : [recipeTime]
+        recipeSteps = Array.isArray(recipeSteps) ? recipeSteps : [recipeSteps]
+        recipeTimeUnit = Array.isArray(recipeTimeUnit) ? recipeTimeUnit : [recipeTimeUnit]
+
+        const buffer = Buffer.from(Img.base64, 'base64')
+        url = await uploadImageWithoutBuffer(buffer, Img.fileName)
 
         const success = await upload.basicRecipe(userId, recipeName, recipeTag, recipeType, recipeTime, recipeSteps, recipeIngredient, recipeTimeUnit, recipeIngredientUnit, recipeIngredientUnitCount, img, recipeDescription)
 
